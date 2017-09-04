@@ -8,6 +8,22 @@
 
 ## 使用
 
+### 导入
+app.build中使用
+
+```java
+    compile 'com.jwkj:TimeLineView:v1.0.3'
+```
+
+### 混淆配置
+
+```java
+#timeruler
+-keep class com.hdl.timeruler.**{*;}
+-dontwarn com.hdl.timeruler.**
+```
+
+
 ### 开启硬件加速
 
 所在activity需要开启硬件加速(建议配置横竖屏不重新走一遍生命周期)
@@ -50,10 +66,3 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
     tRuler.setMoving(true);//默认true
 ```
 
-## 混淆配置
-
-```java
-#timeruler
--keep class com.hdl.timeruler.**{*;}
--dontwarn com.hdl.timeruler.**
-```
