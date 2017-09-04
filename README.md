@@ -50,3 +50,10 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
     tRuler.setMoving(true);//默认true
 ```
 
+## 混淆配置
+
+```java
+#timeruler
+-keep class com.hdl.timeruler.**{*;}
+-dontwarn com.hdl.timeruler.**
+```
