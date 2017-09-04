@@ -1,34 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1000"
+    android:background="#fff"
     android:orientation="vertical"
     tools:context="com.hdl.timerulerdmeo.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="166dp"
-        android:background="#1000"
-        android:layout_centerInParent="true">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <com.hdl.timeruler.TimeRuler
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toTestPage"
+            android:text="去测试页" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toMoveOrPause"
+            android:text="移动/暂停" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toAdd"
+            android:text="指定时间" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showVedioArea"
+            android:text="显示视频区域" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:gravity="center"
+        android:onClick="toAdd"
+        android:text="00:00:00"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="166dp"
+        android:layout_gravity="center"
+        android:background="#1000">
+
+        <com.hdl.timeruler.TimeRulerView
             android:id="@+id/tr_line"
             android:layout_width="match_parent"
             android:layout_height="166dp" />
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="toTestPage"
-        android:text="去测试页" />
-    <Button
-        android:layout_marginLeft="200dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="toAdd"
-        android:text="加1秒" />
-</RelativeLayout>
+
+</LinearLayout>
