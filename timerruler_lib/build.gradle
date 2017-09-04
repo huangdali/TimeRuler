@@ -28,7 +28,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
-    compile 'com.hdl:elog:v2.0.2'
+//    compile 'com.hdl:elog:v2.0.2'
 }
 
 /** 以下开始是将Android Library上传到jcenter的相关配置**/
@@ -40,7 +40,7 @@ publish{
     userOrg = 'huangdali'//bintray.com的用户名
     groupId = 'com.jwkj'//jcenter上的路径
     artifactId = 'TimeLineView'//项目名称
-    publishVersion = 'v1.0.3'//版本号
+    publishVersion = 'v1.0.4'//版本号
     desc = 'TimeLineView'//描述，不重要
     website = siteUrl//项目主页
 }

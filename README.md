@@ -12,7 +12,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.0.3'
+    compile 'com.jwkj:TimeLineView:v1.0.4'
 ```
 
 ### 混淆配置
@@ -66,3 +66,8 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
     tRuler.setMoving(true);//默认true
 ```
 
+## 版本记录
+
+v1.0.4( [2017.09.04]() )
+
+- 【修复】往小于15分钟拉取时时间倒跑问题

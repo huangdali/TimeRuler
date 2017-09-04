@@ -223,7 +223,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 //画可见区域内的视频
                 float startX = getRightXByTimeSeconde(timeSlot.getStartTime()) + lastPix;
                 startX = startX < 0 ? 0 : startX;//左边超出屏幕（<0）的就不画
-
                 float endX = getRightXByTimeSeconde(timeSlot.getEndTime()) + lastPix;
                 endX = endX > getWidth() ? getWidth() : endX;//右边超出屏幕（>getWidth）的就不画
                 vedioAreaRect.set(startX, 0, endX, view_height - textSize);
@@ -329,11 +328,15 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         if (lastPix < 0) {//<0表示往左边移动-->右滑
             count += -lastPix / 10;//需要加上移动的距离
         }
-        //从屏幕左边开始画刻度和文本
-        for (int index = 0; index < count; index++) {
+        //从屏幕左边开始画刻度和文本，从上一天的23:30开始
+        for (int index = -30; index < count; index++) {
             float rightX = index * itemWidth + lastPix;//右边方向x坐标
             if (index == 0) {//根据最左边的时刻算最中间的时刻，左边时刻(rightX*每秒多少像素)+中间时刻（view的宽度/2*每秒多少像素）
-                currentSecond = viewWidth * pixSecond / 2f + Math.abs(rightX * pixSecond);
+                if (rightX < 0) {//15分钟之后的移动
+                    currentSecond = viewWidth * pixSecond / 2f + Math.abs(rightX * pixSecond);
+                } else {//15分钟之前的移动
+                    currentSecond = viewWidth * pixSecond / 2f - rightX * pixSecond;
+                }
                 lastConfigChangedTime = getCurrentTimeMillis();//记录切换前的时间
             }
             if (index % 10 == 0) {//大刻度
@@ -379,7 +382,11 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @param x      所画时间x轴坐标
      */
     public void draText(Canvas canvas, int time, float x) {
-        keyText = DateUtils.getTimeByCurrentSecond(time);
+        if (time < 0) {//上一天
+            keyText = DateUtils.getTimeByCurrentSecond(24 * 60 * 60 + time);
+        } else {
+            keyText = DateUtils.getTimeByCurrentSecond(time);
+        }
         keyTextWidth = keyTickTextPaint.measureText(keyText);
         keyTextX = x - keyTextWidth / 2;
         canvas.drawText(keyText, keyTextX, view_height, keyTickTextPaint);

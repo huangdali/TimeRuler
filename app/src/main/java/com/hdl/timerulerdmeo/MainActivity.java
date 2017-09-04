@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.hdl.elog.ELog;
 import com.hdl.timeruler.TimeRulerView;
 import com.hdl.timeruler.TimeSlot;
 import com.hdl.timeruler.utils.DateUtils;
@@ -28,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tRuler = (TimeRulerView) findViewById(R.id.tr_line);
         tvTime = (TextView) findViewById(R.id.tv_time);
-        ELog.e("创建了");
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
