@@ -44,6 +44,15 @@ public class DateUtils {
     public static String getDateByCurrentTiem(long currentTime) {
         return new SimpleDateFormat("yyyy-MM-dd").format(currentTime);
     }
+    /**
+     * 获取指定时间的年月日
+     *
+     * @param currentTime
+     * @return
+     */
+    public static String getDateTime(long currentTime) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(currentTime);
+    }
 
     /**
      * 获取指定日期的时间（如：10:11:12）

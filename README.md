@@ -6,6 +6,12 @@
 
 ![](https://github.com/huangdali/TimeRuler/blob/master/timerulers.gif)
 
+## 新增时间选择
+
+通过setSelectTimeArea(bool)就可以设置是否显示时间选择
+
+![](https://github.com/huangdali/TimeRuler/blob/master/new.png)
+
 ## 使用
 
 ### 导入
@@ -67,6 +73,10 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 ```
 
 ## 版本记录
+
+v1.0.5( [2017.09.05]() )
+
+- 【新增】新增时间轴上选择时间
 
 v1.0.4( [2017.09.04]() )
 

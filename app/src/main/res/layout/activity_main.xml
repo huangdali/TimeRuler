@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -38,21 +39,30 @@
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/tv_time"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:gravity="center"
-        android:onClick="toAdd"
-        android:text="00:00:00"
-        android:textSize="18sp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toSelected"
+            android:text="选择" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="getSelected"
+            android:text="获取选择时间" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="166dp"
         android:layout_gravity="center"
+        android:layout_marginTop="2dp"
         android:background="#1000">
 
         <com.hdl.timeruler.TimeRulerView
@@ -62,5 +72,23 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:onClick="toAdd"
+        android:text="00:00:00"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tv_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="00:00:00-00:00:00"
+        android:textSize="18sp" />
 
 </LinearLayout>

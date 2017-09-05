@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 
@@ -71,6 +72,14 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private Paint vedioAreaPaint = new Paint();
     private int vedioBg = 0x336e9fff;//视频背景颜色
     private RectF vedioAreaRect = new RectF();
+
+    /**
+     * 选择视频配置
+     */
+    private Paint selectAreaPaint = new Paint();
+    private Paint vedioArea = new Paint();
+    private float selectTimeStrokeWidth = CUtils.dip2px(8);
+
     /**
      * 背景颜色
      */
@@ -84,6 +93,18 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     private boolean isMoving = true;
     /**
+     * 是否显示选择区域
+     */
+    private boolean isSelectTimeArea = false;
+    /**
+     * 选择时间最小值，单位秒
+     */
+    private long selectTimeMin = 1 * 60;
+    /**
+     * 选择时间最大值，单位秒
+     */
+    private long selectTimeMax = 10 * 60;
+    /**
      * 当前日期的开始时间毫秒值
      */
     private long currentDateStartTimeMillis = DateUtils.getTodayStart(System.currentTimeMillis());
@@ -91,7 +112,15 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * 视频时间段集合
      */
     private List<TimeSlot> vedioTimeSlot = new ArrayList<>();
-
+    /**
+     * 选择区域
+     */
+    private static float selectTimeAreaDistanceLeft = -1;//往左边选择的距离
+    private static float selectTimeAreaDistanceRight = -1;//往右边选择的距离
+    /**
+     * 选择时间监听
+     */
+    private OnSelectedTimeListener onSelectedTimeListener;
 
     public TimeRulerView(Context context) {
         this(context, null);
@@ -107,6 +136,29 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         setSurfaceTextureListener(this);
         initPaint();
         moveTimer();//开启移动定时器
+    }
+
+    public boolean isSelectTimeArea() {
+        return isSelectTimeArea;
+    }
+
+    /**
+     * 设置是否选择时间区域
+     *
+     * @param selectTimeArea
+     */
+    public void setSelectTimeArea(boolean selectTimeArea) {
+        if (selectTimeArea) {//选择的时候需要停止选择
+            isMoving = false;
+        }
+        selectTimeAreaDistanceLeft = -1;//需要复位
+        selectTimeAreaDistanceRight = -1;//需要复位
+        isSelectTimeArea = selectTimeArea;
+        refreshCanvas();
+    }
+
+    public void setOnSelectedTimeListener(OnSelectedTimeListener onSelectedTimeListener) {
+        this.onSelectedTimeListener = onSelectedTimeListener;
     }
 
     /**
@@ -195,6 +247,15 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         upAndDownLinePaint.setAntiAlias(true);
         upAndDownLinePaint.setColor(upAndDownLineColor);
         upAndDownLinePaint.setStrokeWidth(upAndDownLineWidth);
+
+        selectAreaPaint.setColor(0xfffabb64);
+        selectAreaPaint.setAntiAlias(true);
+        selectAreaPaint.setStrokeCap(Paint.Cap.ROUND);
+        selectAreaPaint.setStyle(Paint.Style.STROKE);
+        selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
+
+        vedioArea.setColor(0x33fabb64);
+        vedioArea.setAntiAlias(true);
     }
 
     //刷新视图
@@ -206,8 +267,65 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             drawTextAndRuler(canvas);//画文本和刻度
             drawRecodeArea(canvas);//画视频选择区域
             drawCenterLine(canvas);//画中间标线
+            drawSelectTimeArea(canvas);//画视频选择区域
         }
         unlockCanvasAndPost(canvas);
+    }
+
+    /**
+     * 画选择时间的区域
+     *
+     * @param canvas
+     */
+    private void drawSelectTimeArea(Canvas canvas) {
+        if (isSelectTimeArea) {
+            if (selectTimeAreaDistanceLeft == -1) {
+                selectTimeAreaDistanceLeft =(getCurrentTimeMillis()-currentDateStartTimeMillis)/pixSecond/1000f - 2.5f * 60 / pixSecond + lastPix;
+            }
+            if (selectTimeAreaDistanceRight == -1) {
+                selectTimeAreaDistanceRight = (getCurrentTimeMillis()-currentDateStartTimeMillis)/pixSecond/1000f+ 2.5f * 60 / pixSecond + lastPix;
+            }
+            selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
+            canvas.drawLine(selectTimeAreaDistanceLeft, selectTimeStrokeWidth / 2, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
+            canvas.drawLine(selectTimeAreaDistanceRight, selectTimeStrokeWidth / 2, selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
+            selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 2);
+            canvas.drawLine(selectTimeAreaDistanceRight, 0, selectTimeAreaDistanceLeft, 0, selectAreaPaint);
+            selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 3);
+            canvas.drawLine(selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 6, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 6, selectAreaPaint);
+            //画带透明色的选择区域
+            canvas.drawRect(selectTimeAreaDistanceLeft, 0, selectTimeAreaDistanceRight, view_height - textSize, vedioArea);
+            //回调结果出去
+            onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
+        }
+    }
+
+    /**
+     * 获取选择的结束时间
+     * 由于lastPix是负数，所以是-lastPix
+     *
+     * @return
+     */
+    public long getSelectEndTime() {
+        if (selectTimeAreaDistanceRight == -1) {
+            return currentDateStartTimeMillis + (long) (currentSecond * 1000) + (long) (2.5*60* 1000);
+        } else {
+            Log.e("hdltag", "getSelectStartTime(TimeRulerView.java:327):" + DateUtils.getDateTime(getCurrentTimeMillis() + (long) ((selectTimeAreaDistanceRight - lastPix) * pixSecond * 1000)));
+            return currentDateStartTimeMillis+ (long) ((selectTimeAreaDistanceRight - lastPix) * pixSecond * 1000);
+        }
+    }
+
+    /**
+     * 获取选择的开始时间.
+     * 由于lastPix是负数，所以是-lastPix
+     *
+     * @return
+     */
+    public long getSelectStartTime() {
+        if (selectTimeAreaDistanceLeft == -1) {
+            return currentDateStartTimeMillis + (long) (currentSecond * 1000) - (long) (2.5*60* 1000);
+        } else {
+            return currentDateStartTimeMillis + (long) ((selectTimeAreaDistanceLeft + selectTimeStrokeWidth / 2 - lastPix) * pixSecond * 1000);
+        }
     }
 
     /**
@@ -403,7 +521,59 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mScroller.onTouchEvent(event);
+        if (isSelectTimeArea) {//选择视频的时候 下面的时间刻度是禁止滑动的
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float curX = event.getX();//拿到当前的x轴
+                    if (Math.abs(curX - selectTimeAreaDistanceLeft) < Math.abs(curX - selectTimeAreaDistanceRight)) {//左边
+                        //1-10分钟
+                        float currentInterval = (selectTimeAreaDistanceRight - selectTimeStrokeWidth - curX) * pixSecond;//当前时间间隔
+                        if (selectTimeMin < currentInterval && currentInterval < selectTimeMax) {
+                            selectTimeAreaDistanceLeft = curX;
+                            //实时地将结果回调出去
+                            if (onSelectedTimeListener != null) {
+                                onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
+                            }
+                        } else {
+                            Log.e("hdltag", "onTouchEvent(TimeRulerView.java:480): 不能超过" + selectTimeMax / 60f + "分钟");
+                            //实时地将结果回调出去
+                            if (currentInterval >= selectTimeMax) {
+                                onSelectedTimeListener.onMaxTime();
+                            } else if (currentInterval <= selectTimeMin) {
+                                onSelectedTimeListener.onMinTime();
+                            }
+                        }
+                    } else {//右边
+                        //1-10分钟
+                        float currentInterval = (curX - (selectTimeAreaDistanceLeft + selectTimeStrokeWidth)) * pixSecond;//当前时间间隔
+                        if (selectTimeMin < currentInterval && currentInterval < selectTimeMax) {
+                            selectTimeAreaDistanceRight = curX;
+                            //实时地将结果回调出去
+                            if (onSelectedTimeListener != null) {
+//                                ELog.hdl("selectTimeAreaDistanceRight=" + selectTimeAreaDistanceRight);
+//                                ELog.hdl("selectTimeAreaDistanceLeft=" + selectTimeAreaDistanceLeft);
+                                onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
+                            }
+                        } else {
+                            Log.e("hdltag", "onTouchEvent(TimeRulerView.java:480): 不能超过" + selectTimeMax / 60f + "分钟");
+                            //实时地将结果回调出去
+                            if (onSelectedTimeListener != null) {
+                                if (currentInterval >= selectTimeMax) {
+                                    onSelectedTimeListener.onMaxTime();
+                                } else if (currentInterval <= selectTimeMin) {
+                                    onSelectedTimeListener.onMinTime();
+                                }
+                            }
+                        }
+                    }
+                    refreshCanvas();//重绘
+                    break;
+            }
+        } else {
+            mScroller.onTouchEvent(event);
+        }
         return true;
     }
 
