@@ -18,7 +18,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.0.4'
+    compile 'com.jwkj:TimeLineView:v1.0.6'
 ```
 
 ### 混淆配置
