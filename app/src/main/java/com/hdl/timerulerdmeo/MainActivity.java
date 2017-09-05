@@ -129,7 +129,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void toMoveOrPause(View view) {
         isMove = !isMove;
-        tRuler.setMoving(isMove);
+        if (isMove) {
+            tRuler.openMove();
+        }else {
+            tRuler.closeMove();
+        }
     }
 
     /**

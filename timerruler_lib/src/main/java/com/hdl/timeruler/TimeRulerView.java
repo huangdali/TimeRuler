@@ -249,8 +249,22 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      *
      * @param moving
      */
-    public void setMoving(boolean moving) {
+    private void setMoving(boolean moving) {
         isMoving = moving;
+    }
+
+    /**
+     * 打开移动
+     */
+    public void openMove() {
+        setMoving(true);
+    }
+
+    /**
+     * 关闭移动
+     */
+    public void closeMove() {
+        setMoving(false);
     }
 
     /**

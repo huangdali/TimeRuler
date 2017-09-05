@@ -18,7 +18,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.0.6'
+    compile 'com.jwkj:TimeLineView:v1.0.7'
 ```
 
 ### 混淆配置
@@ -69,10 +69,15 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 
 ### 是否自动移动
 ```java
-    tRuler.setMoving(true);//默认true
+    tRuler.openMove();//打开移动
+    tRuler.closeMove();//关闭移动
 ```
 
 ## 版本记录
+
+v1.0.7( [2017.09.05]() )
+
+- 【优化】 使用openMove()、closeMove()代替setMoving(bool)
 
 v1.0.6( [2017.09.05]() )
 
