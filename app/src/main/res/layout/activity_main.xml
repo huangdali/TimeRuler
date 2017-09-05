@@ -59,6 +59,16 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_lanspace"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_height="90dp">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_porental"
         android:layout_width="match_parent"
         android:layout_height="166dp"
         android:layout_gravity="center"

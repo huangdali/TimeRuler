@@ -5,10 +5,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdl.elog.ELog;
+import com.hdl.timeruler.OnBarMoveListener;
 import com.hdl.timeruler.OnSelectedTimeListener;
 import com.hdl.timeruler.TimeRulerView;
 import com.hdl.timeruler.TimeSlot;
@@ -25,15 +27,28 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTime;
     private long date;
     private TextView tvProgress;
+    private LinearLayout llP, llH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tRuler = (TimeRulerView) findViewById(R.id.tr_line);
-        tRuler.setMoving(false);
+        initView();
+        setListener();
 //        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
+//              tRuler.setCurrentTimeMillis(System.currentTimeMillis()-1*24*60*60*1000L);
+    }
+
+    private void initView() {
+        tRuler = (TimeRulerView) findViewById(R.id.tr_line);
+        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
         tvProgress = (TextView) findViewById(R.id.tv_progress);
+        tvTime = (TextView) findViewById(R.id.tv_time);
+        llP = (LinearLayout) findViewById(R.id.ll_porental);
+        llH = (LinearLayout) findViewById(R.id.ll_lanspace);
+    }
+
+    private void setListener() {
         tRuler.setOnSelectedTimeListener(new OnSelectedTimeListener() {
             @Override
             public void onDragging(long startTime, long endTime) {
@@ -50,7 +65,41 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "超过最小时间", Toast.LENGTH_SHORT).show();
             }
         });
-        tvTime = (TextView) findViewById(R.id.tv_time);
+        tRuler.setOnBarMoveListener(new OnBarMoveListener() {
+            @Override
+            public void onDragBar(boolean isLeftDrag, long currentTime) {
+                ELog.e("拖动");
+                ELog.e("isLeftDrag(左边？)=" + isLeftDrag);
+                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
+            }
+
+            @Override
+            public void onBarMoving(long currentTime) {
+                ELog.e("自己移动");
+                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
+            }
+
+            @Override
+            public void onBarMoveFinish(long currentTime) {
+                ELog.e("拖动完成" + DateUtils.getDateTime(currentTime));
+            }
+
+            /**
+             * 移动超过开始时间
+             */
+            @Override
+            public void onMoveExceedStartTime() {
+                ELog.e("超过开始时间了");
+            }
+
+            /**
+             * 移动超过结束时间
+             */
+            @Override
+            public void onMoveExceedEndTime() {
+                ELog.e("超过结束时间了");
+            }
+        });
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -64,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 1000);
-//        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
     }
 
     public void toTestPage(View view) {
@@ -73,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void toAdd(View view) {
 //        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
-        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 8 * 60 * 60 * 1000);
+//        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000);
+        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 20 * 60 * 1000);
     }
 
     boolean isMove = true;
@@ -99,9 +148,18 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            llH.removeAllViews();
+            llH.setVisibility(View.GONE);
+            llP.setVisibility(View.VISIBLE);
+            llP.addView(tRuler);
             tRuler.setViewHeightForDp(166);
+
         } else {
             tRuler.setViewHeightForDp(90);
+            llP.removeAllViews();
+            llP.setVisibility(View.GONE);
+            llH.setVisibility(View.VISIBLE);
+            llH.addView(tRuler);
         }
     }
 

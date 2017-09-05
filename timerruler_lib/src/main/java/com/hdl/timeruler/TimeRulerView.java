@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 
@@ -121,6 +120,10 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * 选择时间监听
      */
     private OnSelectedTimeListener onSelectedTimeListener;
+    /**
+     * 时间轴拖动
+     */
+    private OnBarMoveListener onBarMoveListener;
 
     public TimeRulerView(Context context) {
         this(context, null);
@@ -157,6 +160,10 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         refreshCanvas();
     }
 
+    public void setOnBarMoveListener(OnBarMoveListener onBarMoveListener) {
+        this.onBarMoveListener = onBarMoveListener;
+    }
+
     public void setOnSelectedTimeListener(OnSelectedTimeListener onSelectedTimeListener) {
         this.onSelectedTimeListener = onSelectedTimeListener;
     }
@@ -170,16 +177,21 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     }
 
     /**
-     * 设置当前时间的毫秒值
+     * 设置当前时间的毫秒值.
+     * 设置一个100ms的延迟，避免过快设置导致短时间内重复绘制
      *
      * @param currentTimeMillis
      */
-    public void setCurrentTimeMillis(long currentTimeMillis) {
-        currentDateStartTimeMillis = DateUtils.getTodayStart(currentTimeMillis);
-//        currentSecond = (currentTimeMillis - currentTimeMillis) / 1000f;
-        //设置最左边的时间为当前时间减view宽度一半所占的时间--->这个时间所在的像素值就是
-        lastPix = -((currentTimeMillis - currentDateStartTimeMillis) / 1000f - getWidth() / 2f * pixSecond) / pixSecond;
-        refreshCanvas();
+    public void setCurrentTimeMillis(final long currentTimeMillis) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                currentDateStartTimeMillis = DateUtils.getTodayStart(currentTimeMillis);
+                //设置最左边的时间为当前时间减view宽度一半所占的时间--->这个时间所在的像素值就是
+                lastPix = -((currentTimeMillis - currentDateStartTimeMillis) / 1000f - getWidth() / 2f * pixSecond) / pixSecond;
+                refreshCanvas();
+            }
+        }, 100);
     }
 
     /**
@@ -188,8 +200,16 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @return
      */
     public long getCurrentTimeMillis() {
+//        currentTimeMillis = currentDateStartTimeMillis + (long) currentSecond * 1000L;
+//        if (currentTimeMillis <= currentDateStartTimeMillis) {
+//            currentTimeMillis = currentDateStartTimeMillis;
+//        } else if (currentTimeMillis >= currentDateStartTimeMillis + 24 * 60 * 60 * 1000) {
+//            currentTimeMillis = currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000;
+//        }
         return currentDateStartTimeMillis + (long) currentSecond * 1000L;
     }
+
+    private long currentTimeMillis;
 
     /**
      * 移动定时器
@@ -202,6 +222,14 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                     //(rulerWidthSamll + rulerSpace) / 60   表示1秒钟移动多少像素
                     lastPix -= (rulerWidthSamll + rulerSpace) / 60.0;
                     refreshCanvas();
+                    if (onBarMoveListener != null) {
+                        if (getCurrentTimeMillis() >= currentDateStartTimeMillis + 24 * 60 * 60 * 1000) {
+                            onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
+                            setMoving(false);
+                        } else {
+                            onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                        }
+                    }
                 }
             }
         }, 0, 1000);
@@ -280,10 +308,10 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private void drawSelectTimeArea(Canvas canvas) {
         if (isSelectTimeArea) {
             if (selectTimeAreaDistanceLeft == -1) {
-                selectTimeAreaDistanceLeft =(getCurrentTimeMillis()-currentDateStartTimeMillis)/pixSecond/1000f - 2.5f * 60 / pixSecond + lastPix;
+                selectTimeAreaDistanceLeft = (getCurrentTimeMillis() - currentDateStartTimeMillis) / pixSecond / 1000f - 2.5f * 60 / pixSecond + lastPix;
             }
             if (selectTimeAreaDistanceRight == -1) {
-                selectTimeAreaDistanceRight = (getCurrentTimeMillis()-currentDateStartTimeMillis)/pixSecond/1000f+ 2.5f * 60 / pixSecond + lastPix;
+                selectTimeAreaDistanceRight = (getCurrentTimeMillis() - currentDateStartTimeMillis) / pixSecond / 1000f + 2.5f * 60 / pixSecond + lastPix;
             }
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
             canvas.drawLine(selectTimeAreaDistanceLeft, selectTimeStrokeWidth / 2, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
@@ -307,10 +335,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     public long getSelectEndTime() {
         if (selectTimeAreaDistanceRight == -1) {
-            return currentDateStartTimeMillis + (long) (currentSecond * 1000) + (long) (2.5*60* 1000);
+            return currentDateStartTimeMillis + (long) (currentSecond * 1000) + (long) (2.5 * 60 * 1000);
         } else {
-            Log.e("hdltag", "getSelectStartTime(TimeRulerView.java:327):" + DateUtils.getDateTime(getCurrentTimeMillis() + (long) ((selectTimeAreaDistanceRight - lastPix) * pixSecond * 1000)));
-            return currentDateStartTimeMillis+ (long) ((selectTimeAreaDistanceRight - lastPix) * pixSecond * 1000);
+            return currentDateStartTimeMillis + (long) ((selectTimeAreaDistanceRight - lastPix) * pixSecond * 1000);
         }
     }
 
@@ -322,7 +349,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     public long getSelectStartTime() {
         if (selectTimeAreaDistanceLeft == -1) {
-            return currentDateStartTimeMillis + (long) (currentSecond * 1000) - (long) (2.5*60* 1000);
+            return currentDateStartTimeMillis + (long) (currentSecond * 1000) - (long) (2.5 * 60 * 1000);
         } else {
             return currentDateStartTimeMillis + (long) ((selectTimeAreaDistanceLeft + selectTimeStrokeWidth / 2 - lastPix) * pixSecond * 1000);
         }
@@ -446,8 +473,12 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         if (lastPix < 0) {//<0表示往左边移动-->右滑
             count += -lastPix / 10;//需要加上移动的距离
         }
+        int leftCound = 0;
+        if (getCurrentTimeMillis() < currentDateStartTimeMillis + 15 * 60 * 1000) {//15分钟内的多画上一天的60
+            leftCound = -60;//多花左边的60分钟
+        }
         //从屏幕左边开始画刻度和文本，从上一天的23:30开始
-        for (int index = -30; index < count; index++) {
+        for (int index = leftCound; index < count; index++) {
             float rightX = index * itemWidth + lastPix;//右边方向x坐标
             if (index == 0) {//根据最左边的时刻算最中间的时刻，左边时刻(rightX*每秒多少像素)+中间时刻（view的宽度/2*每秒多少像素）
                 if (rightX < 0) {//15分钟之后的移动
@@ -537,7 +568,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                                 onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
                             }
                         } else {
-                            Log.e("hdltag", "onTouchEvent(TimeRulerView.java:480): 不能超过" + selectTimeMax / 60f + "分钟");
                             //实时地将结果回调出去
                             if (currentInterval >= selectTimeMax) {
                                 onSelectedTimeListener.onMaxTime();
@@ -552,12 +582,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                             selectTimeAreaDistanceRight = curX;
                             //实时地将结果回调出去
                             if (onSelectedTimeListener != null) {
-//                                ELog.hdl("selectTimeAreaDistanceRight=" + selectTimeAreaDistanceRight);
-//                                ELog.hdl("selectTimeAreaDistanceLeft=" + selectTimeAreaDistanceLeft);
                                 onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
                             }
                         } else {
-                            Log.e("hdltag", "onTouchEvent(TimeRulerView.java:480): 不能超过" + selectTimeMax / 60f + "分钟");
                             //实时地将结果回调出去
                             if (onSelectedTimeListener != null) {
                                 if (currentInterval >= selectTimeMax) {
@@ -607,7 +634,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onScroll(int distance) {
-//        ELog.e("distance" + distance);
+        onBarMoveListener.onDragBar(distance > 0, getCurrentTimeMillis());
         lastPix += distance;
         refreshCanvas();
     }
@@ -621,7 +648,26 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onFinished() {
-//        ELog.e("滑动结束--------");
+        if (currentDateStartTimeMillis <= getCurrentTimeMillis() && getCurrentTimeMillis() <= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 2000)) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (onBarMoveListener != null) {
+                        onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
+                    }
+                }
+            }, 1000);
+        } else if (currentDateStartTimeMillis >= getCurrentTimeMillis()) {
+            setCurrentTimeMillis(currentDateStartTimeMillis);
+            if (onBarMoveListener != null) {
+                onBarMoveListener.onMoveExceedStartTime();
+            }
+        } else if (getCurrentTimeMillis() >= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000)) {
+            setCurrentTimeMillis(currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000);
+            if (onBarMoveListener != null) {
+                onBarMoveListener.onMoveExceedEndTime();
+            }
+        }
     }
 
     /**
