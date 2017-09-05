@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 1000);
+        List<TimeSlot> times = new ArrayList<>();
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
+        tRuler.setVedioTimeSlot(times);
     }
 
     public void toTestPage(View view) {

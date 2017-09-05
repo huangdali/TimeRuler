@@ -28,7 +28,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.0.9'
+    compile 'com.jwkj:TimeLineView:v1.1.2'
 ```
 
 ### 混淆配置
@@ -85,7 +85,11 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 
 ## 版本记录
 
-v1.0.9、v1.0.8( [2017.09.05]() )
+v1.1.2( [2017.09.05]() )
+
+- 【优化】 onBarMoving在主线程中执行
+
+v1.0.8( [2017.09.05]() )
 
 - 【优化】 删除无用依赖和无用代码
 

@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -144,6 +146,17 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         moveTimer();//开启移动定时器
     }
 
+    private static final int WHAT_MOVING = 447;
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case WHAT_MOVING:
+                    onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                    break;
+            }
+        }
+    };
     public boolean isSelectTimeArea() {
         return isSelectTimeArea;
     }
@@ -230,7 +243,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                             onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
                             setMoving(false);
                         } else {
-                            onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                            mHandler.sendEmptyMessage(WHAT_MOVING);
                         }
                     }
                 }
