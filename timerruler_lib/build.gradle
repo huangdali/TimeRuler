@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -36,7 +36,7 @@ publish{
     userOrg = 'huangdali'//bintray.com的用户名
     groupId = 'com.jwkj'//jcenter上的路径
     artifactId = 'TimeLineView'//项目名称
-    publishVersion = 'v1.0.8'//版本号
+    publishVersion = 'v1.0.9'//版本号
     desc = 'TimeLineView'//描述，不重要
     website = siteUrl//项目主页
 }

@@ -1,5 +1,6 @@
 package com.hdl.timeruler;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -26,6 +28,7 @@ import java.util.TimerTask;
  * Created by HDL on 2017/8/21.
  */
 
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TimeRulerView extends TextureView implements TextureView.SurfaceTextureListener, ScaleScroller.ScrollingListener {
     /**
      * 滑动辅助类
