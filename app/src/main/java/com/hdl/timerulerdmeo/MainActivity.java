@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) - 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
         times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
         times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 11 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 13 * 60 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 25 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 24 * 60 * 60 * 1000));
         tRuler.setVedioTimeSlot(times);
     }
 

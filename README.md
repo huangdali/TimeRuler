@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.1.2'
+    compile 'com.jwkj:TimeLineView:v1.2.3'
 ```
 
 ### 混淆配置
@@ -123,6 +123,14 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 - 选择时间边框大小-->selectTimeBorderSize" format="dimension" />
 
 ## 版本记录
+
+v1.2.3( [2017.09.06]() )
+
+- 【修复】未设置setOnBarMoveListener时抛出空指针异常
+
+v1.2.2( [2017.09.06]() )
+
+- 【优化】删除无用日志
 
 v1.2.1( [2017.09.06]() )
 

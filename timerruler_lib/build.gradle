@@ -36,7 +36,7 @@ publish{
     userOrg = 'huangdali'//bintray.com的用户名
     groupId = 'com.jwkj'//jcenter上的路径
     artifactId = 'TimeLineView'//项目名称
-    publishVersion = 'v1.2.1'//版本号
+    publishVersion = 'v1.2.3'//版本号
     desc = 'TimeLineView'//描述，不重要
     website = siteUrl//项目主页
 }

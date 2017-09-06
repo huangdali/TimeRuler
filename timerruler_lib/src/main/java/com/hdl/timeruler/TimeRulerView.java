@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 
@@ -249,7 +248,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case WHAT_MOVING:
-                    onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                    if (onBarMoveListener != null) {
+                        onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                    }
                     break;
             }
         }
@@ -786,8 +787,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onScroll(int distance) {
-        Log.e("hdltag", "onScroll(TimeRulerView.java:671):开始滑动了");
-        onBarMoveListener.onDragBar(distance > 0, getCurrentTimeMillis());
+        if (onBarMoveListener != null) {
+            onBarMoveListener.onDragBar(distance > 0, getCurrentTimeMillis());
+        }
         lastPix += distance;
         refreshCanvas();
     }
@@ -803,7 +805,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onScrollFinished() {
-        Log.e("hdltag", "onScrollFinished(TimeRulerView.java:685):滑动结束了");
         if (currentDateStartTimeMillis <= getCurrentTimeMillis() && getCurrentTimeMillis() <= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 2000)) {
             postDelayed(new Runnable() {
                 @Override

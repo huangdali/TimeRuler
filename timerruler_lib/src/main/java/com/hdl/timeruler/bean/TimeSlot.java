@@ -47,7 +47,7 @@ public class TimeSlot {
      * @return
      */
     public float getEndTime() {
-        if (currentDayStartTimeMillis + 24 * 60 * 60 * 1000 < endTime) {
+        if (currentDayStartTimeMillis + 24 * 60 * 60 * 1000 <= endTime) {
             return 24 * 60 * 60  - 1;
         }
         return (endTime - DateUtils.getTodayStart(endTime)) / 1000f;
