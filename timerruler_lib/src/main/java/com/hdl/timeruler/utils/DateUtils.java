@@ -1,5 +1,7 @@
 package com.hdl.timeruler.utils;
 
+import com.hdl.timeruler.bean.TimeSlot;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,6 +46,7 @@ public class DateUtils {
     public static String getDateByCurrentTiem(long currentTime) {
         return new SimpleDateFormat("yyyy-MM-dd").format(currentTime);
     }
+
     /**
      * 获取指定时间的年月日
      *
@@ -79,5 +82,27 @@ public class DateUtils {
             hour = hour % 24;
         }
         return (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
+    }
+
+    /**
+     * 根据当前的秒数计算时间
+     *
+     * @param currentSecond
+     * @return
+     */
+    public static String getTimeByCurrentHours(int currentSecond) {
+        currentSecond = currentSecond * 10;
+        currentSecond = currentSecond / 60;
+        int minute = currentSecond % 60;
+        int hour = currentSecond / 60;
+        if (hour >= 24) {
+            hour = hour % 24;
+        }
+        return (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
+    }
+
+    public static void main(String[] args) {
+        TimeSlot timeSlot = new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()),DateUtils.getTodayStart(System.currentTimeMillis()) - 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000);
+        System.out.println(timeSlot.toString());
     }
 }

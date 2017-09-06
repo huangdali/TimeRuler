@@ -1,4 +1,4 @@
-package com.hdl.timeruler;
+package com.hdl.timeruler.bean;
 
 /**
  * 时间轴移动、拖动的回调

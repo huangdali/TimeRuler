@@ -7,6 +7,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Scroller;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * 辅助滑动监听类
  */
@@ -28,7 +31,7 @@ public class ScaleScroller {
             if (isFinished)
                 handler.sendEmptyMessage(ON_FLING);
             else
-                listener.onFinished();
+                listener.onScrollFinished();
         }
     };
 
@@ -67,6 +70,7 @@ public class ScaleScroller {
     private boolean isDouble = false;
     private double time;
     private float lastDistanceX;
+    private boolean isCanScroll = true;//是否可以拖动--->刚缩放完成1秒内不能拖动（防止时间抖动）
 
     //由外部传入event事件
     public boolean onTouchEvent(MotionEvent event) {
@@ -75,7 +79,7 @@ public class ScaleScroller {
             scroller.forceFinished(true);
             lastX = (int) event.getX();
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (event.getPointerCount() == 1 && isDouble == false) {
+            if (event.getPointerCount() == 1 && !isDouble && isCanScroll) {
                 int distanceX = (int) (event.getX() - lastX);
                 if (distanceX != 0) {
                     if (Math.abs(Math.abs(distanceX) - Math.abs(lastDistanceX)) < 100) {//防止快速滑动导致数据跳远过大
@@ -84,7 +88,8 @@ public class ScaleScroller {
                         lastDistanceX = distanceX;
                     }
                 }
-            } else if (event.getPointerCount() == 2 && isDouble == true) {
+            } else if (event.getPointerCount() == 2 && isDouble) {
+                isCanScroll = false;//不能在拖动
                 afterLenght = getDistance(event);// 获取两点的距离
                 if (beforeLength == 0) {
                     beforeLength = afterLenght;
@@ -97,8 +102,16 @@ public class ScaleScroller {
                 }
             }
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (event.getPointerCount() == 1 && isDouble == false) {
-                listener.onFinished();
+            if (event.getPointerCount() == 1 && !isDouble) {
+                listener.onScrollFinished();
+            } else if (isDouble) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        isCanScroll = true;//1秒之后才能继续拖动
+                    }
+                }, 500);
+                listener.onZoomFinished();
             }
         } else if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN) {
             if (event.getPointerCount() == 2) {
@@ -128,12 +141,15 @@ public class ScaleScroller {
          */
         void onScroll(int distance);
 
-        void onStarted();
+        /**
+         * 缩放结束
+         */
+        void onZoomFinished();
 
         /**
          * 滑动结束
          */
-        void onFinished();
+        void onScrollFinished();
 
         /**
          * 缩放时

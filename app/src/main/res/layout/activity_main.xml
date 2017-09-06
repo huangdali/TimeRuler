@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,9 +62,9 @@
     <LinearLayout
         android:id="@+id/ll_lanspace"
         android:layout_width="match_parent"
+        android:layout_height="90dp"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_height="90dp">
+        android:visibility="gone">
 
     </LinearLayout>
 
@@ -78,7 +79,11 @@
         <com.hdl.timeruler.TimeRulerView
             android:id="@+id/tr_line"
             android:layout_width="match_parent"
-            android:layout_height="166dp" />
+            android:layout_height="166dp"
+            app:centerLineColor="#ff6e9fff"
+            app:rulerLineColor="#ffb5b5b5"
+            app:rulerTextColor="#ff444242"
+            app:vedioAreaColor="#336e9fff" />
 
     </LinearLayout>
 

@@ -3,6 +3,7 @@
 时间轴、时间刻度尺
 
 - 已适配横竖屏
+- 缩放功能（分钟、小时级别）
 - 自动移动（自由决定开启与关闭移动）
 - 时间轴中选择时间
 - 实时设置当天时间
@@ -10,6 +11,7 @@
 - 超时（超过00:00:00,、23:59:59）自动处理
 - 带拖动开始、结束、自动移动、超时回调
 - 带时间选择回调
+- 属性自动配置
 
 
 ## 效果图
@@ -55,11 +57,28 @@ app.build中使用
 
 ### 布局
 
+最简单的使用（属性使用默认值）
+
 ```java
  <com.hdl.timeruler.TimeRulerView
             android:id="@+id/tr_line"
             android:layout_width="match_parent"
             android:layout_height="166dp" />
+```
+
+配置属性（更多属性说明见本文附录）
+
+```java
+    <com.hdl.timeruler.TimeRulerView
+            android:id="@+id/tr_line"
+            android:layout_width="match_parent"
+            android:layout_height="166dp"
+            app:centerLineColor="#ff6e9fff"
+            app:rulerLineColor="#ffb5b5b5"
+            app:rulerTextColor="#ff444242"
+            app:vedioAreaColor="#336e9fff"
+            ...
+            />
 ```
 
 ### 设置当前时间
@@ -72,8 +91,8 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 
 ```java
         List<TimeSlot> times = new ArrayList<>();
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 3*60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4*60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()),DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()),DateUtils.getTodayStart(System.currentTimeMillis()) + 3*60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4*60 * 60 * 1000));
         tRuler.setVedioTimeSlot(times);
 ```
 
@@ -83,7 +102,33 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
     tRuler.closeMove();//关闭移动
 ```
 
+
+## 附表
+
+### 布局文件属性配置说明
+> 所有属性都有默认值，可以不设置
+
+- 中轴线颜色-->centerLineColor
+- 时间文字颜色-->rulerTextColor
+- 含有录像背景颜色-->vedioAreaColor
+- 刻度线颜色-->rulerLineColor
+- 选择时间的边框颜色-->selectTimeBorderColor
+- 已选择时间颜色-->selectTimeAreaColor
+- 中轴线大小-->centerLineSize
+- 时间文字大小-->rulerTextSize
+- 小刻度线宽度-->samllRulerLineWidth
+- 小刻度线高度-->samllRulerLineHeight
+- 大刻度线宽度-->largeRulerLineWidth
+- 大刻度线高度-->largeRulerLineHeight
+- 选择时间边框大小-->selectTimeBorderSize" format="dimension" />
+
 ## 版本记录
+
+v1.2.1( [2017.09.06]() )
+
+- 【新增】 缩放功能（分钟、小时级别）
+- 【新增】 布局文件中配置颜色、大小属性，同样也提供setXXX()方法
+- 【优化】 TimeSlot构造方法新增第一个参数为当天开始时间毫秒值（即当天凌晨00:00:00的毫秒值）
 
 v1.1.2( [2017.09.05]() )
 

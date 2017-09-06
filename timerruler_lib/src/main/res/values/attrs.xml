@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimeRulerView">
+        <!--中轴线颜色-->
+        <attr name="centerLineColor" format="color" />
+        <!--时间文字颜色-->
+        <attr name="rulerTextColor" format="color" />
+        <!--含有录像背景颜色-->
+        <attr name="vedioAreaColor" format="color" />
+        <!--刻度线颜色-->
+        <attr name="rulerLineColor" format="color" />
+        <!--选择时间的边框颜色-->
+        <attr name="selectTimeBorderColor" format="color" />
+        <!--已选择时间颜色-->
+        <attr name="selectTimeAreaColor" format="color" />
+        <!--中轴线大小-->
+        <attr name="centerLineSize" format="dimension" />
+        <!--时间文字大小-->
+        <attr name="rulerTextSize" format="dimension" />
+        <!--小刻度线宽度-->
+        <attr name="samllRulerLineWidth" format="dimension" />
+        <!--小刻度线高度-->
+        <attr name="samllRulerLineHeight" format="dimension" />
+        <!--大刻度线宽度-->
+        <attr name="largeRulerLineWidth" format="dimension" />
+        <!--大刻度线高度-->
+        <attr name="largeRulerLineHeight" format="dimension" />
+        <!--选择时间边框大小-->
+        <attr name="selectTimeBorderSize" format="dimension" />
+
+    </declare-styleable>
+
+</resources>

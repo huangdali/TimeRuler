@@ -3,6 +3,7 @@ package com.hdl.timeruler;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,6 +18,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 
+import com.hdl.timeruler.bean.OnBarMoveListener;
+import com.hdl.timeruler.bean.OnSelectedTimeListener;
+import com.hdl.timeruler.bean.ScaleMode;
+import com.hdl.timeruler.bean.TimeSlot;
 import com.hdl.timeruler.utils.CUtils;
 import com.hdl.timeruler.utils.DateUtils;
 
@@ -38,26 +43,29 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     private ScaleScroller mScroller;
     /**
-     * 当前时间秒数【正中间】
+     * 当前时间秒数（中轴线时间）
      */
     private float currentSecond = 0;
     /**
      * 刻度配置
      */
-    private Paint rulerPaint = new Paint();//刻度画笔
+    private Paint smallRulerPaint = new Paint();//小刻度画笔
     private int rulerColor = 0xffb5b5b5;//刻度的颜色
-    private int rulerWidthSamll = CUtils.dip2px(1);//小刻度的宽度
+    private int rulerWidthSamll = CUtils.dip2px(0.5f);//小刻度的宽度
     private int rulerHeightSamll = CUtils.dip2px(10);//小刻度的高度
-    private int rulerSpace = CUtils.dip2px(12);//刻度间的间隔
-    private static final int MAX_SCALE = CUtils.dip2px(20);//最大缩放值
-    private static final int MIN_SCALE = CUtils.dip2px(4);//最小缩放值
-    private int rulerWidthBig = CUtils.dip2px(1);//大刻度的宽度
+    private static final int DEFAULT_RULER_SPACE = CUtils.dip2px(12);//设置item默认间隔
+    private int rulerSpace = DEFAULT_RULER_SPACE;//刻度间的间隔
+    private static final int MAX_SCALE = CUtils.dip2px(39);//最大缩放值
+    private static final int MIN_SCALE = CUtils.dip2px(5);//最小缩放值
+
+    private Paint largeRulerPaint = new Paint();//大刻度画笔
+    private int rulerWidthBig = CUtils.dip2px(0.5f);//大刻度的宽度
     private int rulerHeightBig = CUtils.dip2px(20);//大刻度的高度
     /**
      * 上下两条线
      */
     private Paint upAndDownLinePaint = new Paint();//刻度画笔
-    private int upAndDownLineWidth = CUtils.dip2px(2);//上下两条线的宽度
+    private int upAndDownLineWidth = CUtils.dip2px(1);//上下两条线的宽度
     private int upAndDownLineColor = rulerColor;
 
     /**
@@ -80,10 +88,12 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private RectF vedioAreaRect = new RectF();
 
     /**
-     * 选择视频配置
+     * 选择时间配置
      */
-    private Paint selectAreaPaint = new Paint();
-    private Paint vedioArea = new Paint();
+    private Paint selectAreaPaint = new Paint();//选择时间边框
+    private int selectTimeBorderColor = 0xfffabb64;//边框颜色
+    private Paint vedioArea = new Paint();//已选时间
+    private int selectTimeAreaColor = 0x33fabb64;//已选时间颜色
     private float selectTimeStrokeWidth = CUtils.dip2px(8);
 
     /**
@@ -142,12 +152,97 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     public TimeRulerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        initAttr(attrs, defStyle);
         mScroller = new ScaleScroller(getContext(), this);
         setSurfaceTextureListener(this);
         initPaint();
         moveTimer();//开启移动定时器
     }
 
+    /**
+     * 初始化画笔
+     */
+    private void initPaint() {
+        smallRulerPaint.setAntiAlias(true);
+        smallRulerPaint.setColor(rulerColor);
+        smallRulerPaint.setStrokeWidth(rulerWidthSamll);
+
+        largeRulerPaint.setAntiAlias(true);
+        largeRulerPaint.setColor(rulerColor);
+        largeRulerPaint.setStrokeWidth(rulerWidthBig);
+
+        keyTickTextPaint.setAntiAlias(true);
+        keyTickTextPaint.setColor(textColor);
+        keyTickTextPaint.setTextSize(textSize);
+
+        centerLinePaint.setAntiAlias(true);
+        centerLinePaint.setStrokeWidth(centerLineWidth);
+        centerLinePaint.setColor(centerLineColor);
+
+        vedioAreaPaint.setAntiAlias(true);
+        vedioAreaPaint.setColor(vedioBg);
+
+        upAndDownLinePaint.setAntiAlias(true);
+        upAndDownLinePaint.setColor(upAndDownLineColor);
+        upAndDownLinePaint.setStrokeWidth(upAndDownLineWidth);
+
+        selectAreaPaint.setColor(selectTimeBorderColor);
+        selectAreaPaint.setAntiAlias(true);
+        selectAreaPaint.setStrokeCap(Paint.Cap.ROUND);
+        selectAreaPaint.setStyle(Paint.Style.STROKE);
+        selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
+
+        vedioArea.setColor(selectTimeAreaColor);
+        vedioArea.setAntiAlias(true);
+    }
+
+    /**
+     * 初始化属性
+     *
+     * @param attrs
+     * @param defStyleAttr
+     */
+    private void initAttr(AttributeSet attrs, int defStyleAttr) {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.TimeRulerView, defStyleAttr, 0);
+        int attrCount = a.getIndexCount();
+        for (int index = 0; index < attrCount; index++) {
+            int attr = a.getIndex(index);
+            if (attr == R.styleable.TimeRulerView_centerLineColor) {//中轴线颜色
+                centerLineColor = a.getColor(attr, centerLineColor);
+            } else if (attr == R.styleable.TimeRulerView_centerLineSize) {//中轴线宽度
+                centerLineWidth = (int) a.getDimension(attr, centerLineWidth);
+            } else if (attr == R.styleable.TimeRulerView_vedioAreaColor) {// 视频区域颜色
+                vedioBg = a.getColor(attr, vedioBg);
+            } else if (attr == R.styleable.TimeRulerView_rulerTextColor) {// 刻度文本颜色
+                textColor = a.getColor(attr, textColor);
+            } else if (attr == R.styleable.TimeRulerView_rulerTextSize) {// 刻度文本大小
+                textSize = (int) a.getDimension(attr, textSize);
+            } else if (attr == R.styleable.TimeRulerView_rulerLineColor) {// 刻度线颜色
+                rulerColor = a.getColor(attr, rulerColor);
+                upAndDownLineColor = rulerColor;
+            } else if (attr == R.styleable.TimeRulerView_selectTimeBorderColor) {// 选择时间的边框颜色
+                selectTimeBorderColor = a.getColor(attr, selectTimeBorderColor);
+            } else if (attr == R.styleable.TimeRulerView_selectTimeAreaColor) {// 已选时间区域颜色
+                selectTimeAreaColor = a.getColor(attr, selectTimeAreaColor);
+            } else if (attr == R.styleable.TimeRulerView_samllRulerLineWidth) {// 小刻度宽度
+                rulerWidthSamll = (int) a.getDimension(attr, rulerWidthSamll);
+            } else if (attr == R.styleable.TimeRulerView_samllRulerLineHeight) {// 小刻度高度
+                rulerHeightSamll = (int) a.getDimension(attr, rulerHeightSamll);
+            } else if (attr == R.styleable.TimeRulerView_largeRulerLineWidth) {// 大刻度宽度
+                rulerWidthBig = (int) a.getDimension(attr, rulerWidthBig);
+            } else if (attr == R.styleable.TimeRulerView_largeRulerLineHeight) {// 大刻度高度
+                rulerHeightBig = (int) a.getDimension(attr, rulerHeightBig);
+            } else if (attr == R.styleable.TimeRulerView_selectTimeBorderSize) {// 大刻度高度
+                selectTimeStrokeWidth = a.getDimension(attr, selectTimeStrokeWidth);
+            }
+        }
+        a.recycle();
+    }
+
+    private int scaleMode = ScaleMode.KEY_MINUTE;
+    /**
+     * 切换主线程
+     */
     private static final int WHAT_MOVING = 447;
     private Handler mHandler = new Handler() {
         @Override
@@ -171,12 +266,17 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     public void setSelectTimeArea(boolean selectTimeArea) {
         if (selectTimeArea) {//选择的时候需要停止选择
+            if (scaleMode == ScaleMode.KEY_HOUSE) {
+                scaleMode = ScaleMode.KEY_MINUTE;//要恢复到分钟模式，否则刻度精度太高无法选择
+                rulerSpace = DEFAULT_RULER_SPACE;
+            }
             isMoving = false;
         }
         selectTimeAreaDistanceLeft = -1;//需要复位
         selectTimeAreaDistanceRight = -1;//需要复位
         isSelectTimeArea = selectTimeArea;
-        refreshCanvas();
+//        refreshCanvas();
+        setCurrentTimeMillisNoDelayed(getCurrentTimeMillis());
     }
 
     public void setOnBarMoveListener(OnBarMoveListener onBarMoveListener) {
@@ -221,7 +321,8 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     private void setCurrentTimeMillisNoDelayed(long currentTimeMillis) {
         int itemWidth = rulerWidthSamll + rulerSpace;//单个view的宽度
-        pixSecond = 60f / itemWidth;//itemWidth表示一分钟，
+        getPixSecond(itemWidth);
+//        pixSecond = 60f / itemWidth;//itemWidth表示一分钟，
         //设置最左边的时间为当前时间减view宽度一半所占的时间--->这个时间所在的像素值就是
         lastPix = -((currentTimeMillis - currentDateStartTimeMillis) / 1000f - getWidth() / 2f * pixSecond) / pixSecond;
         refreshCanvas();
@@ -233,12 +334,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @return
      */
     public long getCurrentTimeMillis() {
-//        currentTimeMillis = currentDateStartTimeMillis + (long) currentSecond * 1000L;
-//        if (currentTimeMillis <= currentDateStartTimeMillis) {
-//            currentTimeMillis = currentDateStartTimeMillis;
-//        } else if (currentTimeMillis >= currentDateStartTimeMillis + 24 * 60 * 60 * 1000) {
-//            currentTimeMillis = currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000;
-//        }
         return currentDateStartTimeMillis + (long) currentSecond * 1000L;
     }
 
@@ -253,7 +348,11 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             public void run() {
                 if (isMoving) {
                     //(rulerWidthSamll + rulerSpace) / 60   表示1秒钟移动多少像素
-                    lastPix -= (rulerWidthSamll + rulerSpace) / 60.0;
+                    if (scaleMode == ScaleMode.KEY_MINUTE) {
+                        lastPix -= (rulerWidthSamll + rulerSpace) / 60.0;
+                    } else {
+                        lastPix -= (rulerWidthSamll + rulerSpace) / (10 * 60.0);
+                    }
                     refreshCanvas();
                     if (onBarMoveListener != null) {
                         if (getCurrentTimeMillis() >= currentDateStartTimeMillis + 24 * 60 * 60 * 1000) {
@@ -300,39 +399,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         setMoving(false);
     }
 
-    /**
-     * 初始化画笔
-     */
-    private void initPaint() {
-        rulerPaint.setAntiAlias(true);
-        rulerPaint.setColor(rulerColor);
-        rulerPaint.setStrokeWidth(rulerWidthSamll);
-
-        keyTickTextPaint.setAntiAlias(true);
-        keyTickTextPaint.setColor(textColor);
-        keyTickTextPaint.setTextSize(textSize);
-
-        centerLinePaint.setAntiAlias(true);
-        centerLinePaint.setStrokeWidth(centerLineWidth);
-        centerLinePaint.setColor(centerLineColor);
-
-        vedioAreaPaint.setAntiAlias(true);
-        vedioAreaPaint.setColor(vedioBg);
-
-        upAndDownLinePaint.setAntiAlias(true);
-        upAndDownLinePaint.setColor(upAndDownLineColor);
-        upAndDownLinePaint.setStrokeWidth(upAndDownLineWidth);
-
-        selectAreaPaint.setColor(0xfffabb64);
-        selectAreaPaint.setAntiAlias(true);
-        selectAreaPaint.setStrokeCap(Paint.Cap.ROUND);
-        selectAreaPaint.setStyle(Paint.Style.STROKE);
-        selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
-
-        vedioArea.setColor(0x33fabb64);
-        vedioArea.setAntiAlias(true);
-    }
-
     //刷新视图
     private void refreshCanvas() {
         Canvas canvas = lockCanvas();
@@ -340,7 +406,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             canvas.drawColor(bgColor);
             drawUpAndDownLine(canvas);
             drawTextAndRuler(canvas);//画文本和刻度
-            drawRecodeArea(canvas);//画视频选择区域
+            drawRecodeArea(canvas);//画有效视频区域
             drawCenterLine(canvas);//画中间标线
             drawSelectTimeArea(canvas);//画视频选择区域
         }
@@ -363,9 +429,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
             canvas.drawLine(selectTimeAreaDistanceLeft, selectTimeStrokeWidth / 2, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
             canvas.drawLine(selectTimeAreaDistanceRight, selectTimeStrokeWidth / 2, selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
-            selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 2);
-            canvas.drawLine(selectTimeAreaDistanceRight, 0, selectTimeAreaDistanceLeft, 0, selectAreaPaint);
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 3);
+            canvas.drawLine(selectTimeAreaDistanceRight, 0, selectTimeAreaDistanceLeft, 0, selectAreaPaint);
+            selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 4);
             canvas.drawLine(selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 6, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 6, selectAreaPaint);
             //画带透明色的选择区域
             canvas.drawRect(selectTimeAreaDistanceLeft, 0, selectTimeAreaDistanceRight, view_height - textSize, vedioArea);
@@ -408,7 +474,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @param canvas
      */
     private void drawRecodeArea(Canvas canvas) {
-//        ELog.e(vedioTimeSlot);
         for (TimeSlot timeSlot : vedioTimeSlot) {
             //判断是否在可见范围内
             if (timeSlot.getEndTime() > getScreenLeftTimeSeconde() && timeSlot.getStartTime() < getScreenRightTimeSeconde()) {
@@ -512,17 +577,22 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @param canvas
      */
     private void drawTextAndRuler(Canvas canvas) {
-        rulerPaint.setStrokeWidth(rulerWidthBig);
         int viewWidth = getWidth();
         int itemWidth = rulerWidthSamll + rulerSpace;//单个view的宽度
-        pixSecond = 60f / itemWidth;//itemWidth表示一分钟，
+        getPixSecond(itemWidth);
         int count = viewWidth / itemWidth;
         if (lastPix < 0) {//<0表示往左边移动-->右滑
             count += -lastPix / 10;//需要加上移动的距离
         }
         int leftCound = 0;
-        if (getCurrentTimeMillis() < currentDateStartTimeMillis + 15 * 60 * 1000) {//15分钟内的多画上一天的60
-            leftCound = -60;//多花左边的60分钟
+        if (scaleMode == ScaleMode.KEY_MINUTE) {
+            if (getCurrentTimeMillis() < currentDateStartTimeMillis + 15 * 60 * 1000) {//15分钟内的多画上一天的60
+                leftCound = -60;//多花左边的60分钟
+            }
+        } else {
+            if (getCurrentTimeMillis() < currentDateStartTimeMillis + 6 * 60 * 60 * 1000) {//15分钟内的多画上一天的60
+                leftCound = -60;//多花左边的60分钟
+            }
         }
         //从屏幕左边开始画刻度和文本，从上一天的23:30开始
         for (int index = leftCound; index < count; index++) {
@@ -535,19 +605,43 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 }
                 lastConfigChangedTime = getCurrentTimeMillis();//记录切换前的时间
             }
-            if (index % 10 == 0) {//大刻度
+            int divisor;//除数、刻度精度
+            switch (scaleMode) {
+                case ScaleMode.KEY_HOUSE:
+                    divisor = 6;
+                    break;
+                case ScaleMode.KEY_MINUTE:
+                    divisor = 10;
+                    break;
+                default:
+                    divisor = 10;
+            }
+            if (index % divisor == 0) {//大刻度
                 //画上边刻度
-                canvas.drawLine(rightX, 0, rightX, rulerHeightBig, rulerPaint);
+                canvas.drawLine(rightX, 0, rightX, rulerHeightBig, largeRulerPaint);
                 //画下边刻度
-                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightBig - textSize, rulerPaint);
+                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightBig - textSize, largeRulerPaint);
                 //画文本
                 draText(canvas, index * 60, rightX);
             } else {//小刻度
                 //画上面小刻度
-                canvas.drawLine(rightX, 0, rightX, rulerHeightSamll, rulerPaint);
+                canvas.drawLine(rightX, 0, rightX, rulerHeightSamll, smallRulerPaint);
                 //画下面小刻度
-                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightSamll - textSize, rulerPaint);
+                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightSamll - textSize, smallRulerPaint);
             }
+        }
+    }
+
+    /**
+     * 根据缩放精度获取每格表示是多少分钟
+     *
+     * @param itemWidth
+     */
+    private void getPixSecond(int itemWidth) {
+        if (scaleMode == ScaleMode.KEY_MINUTE) {
+            pixSecond = 60f / itemWidth;//itemWidth表示一分钟，
+        } else {
+            pixSecond = 10 * 60f / itemWidth;//itemWidth表示一分钟，
         }
     }
 
@@ -578,10 +672,18 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @param x      所画时间x轴坐标
      */
     public void draText(Canvas canvas, int time, float x) {
-        if (time < 0) {//上一天
-            keyText = DateUtils.getTimeByCurrentSecond(24 * 60 * 60 + time);
+        if (scaleMode == ScaleMode.KEY_MINUTE) {
+            if (time < 0) {
+                keyText = DateUtils.getTimeByCurrentSecond(24 * 60 * 60 + time);
+            } else {
+                keyText = DateUtils.getTimeByCurrentSecond(time);
+            }
         } else {
-            keyText = DateUtils.getTimeByCurrentSecond(time);
+            if (time < 0) {
+                keyText = DateUtils.getTimeByCurrentHours(24 * 60 * 60 + time);
+            } else {
+                keyText = DateUtils.getTimeByCurrentHours(time);
+            }
         }
         keyTextWidth = keyTickTextPaint.measureText(keyText);
         keyTextX = x - keyTextWidth / 2;
@@ -593,6 +695,9 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        if (heightMode == MeasureSpec.EXACTLY) {//布局里面设置大小，其他都是默认值
+            view_height = heightSize;
+        }
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         setMeasuredDimension(widthSize, heightSize);
     }
@@ -688,15 +793,17 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     }
 
     @Override
-    public void onStarted() {
+    public void onZoomFinished() {
+
     }
+
 
     /**
      * 滑动结束
      */
     @Override
-    public void onFinished() {
-        Log.e("hdltag", "onFinished(TimeRulerView.java:685):滑动结束了");
+    public void onScrollFinished() {
+        Log.e("hdltag", "onScrollFinished(TimeRulerView.java:685):滑动结束了");
         if (currentDateStartTimeMillis <= getCurrentTimeMillis() && getCurrentTimeMillis() <= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 2000)) {
             postDelayed(new Runnable() {
                 @Override
@@ -727,7 +834,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onZoom(float mScale, double time) {
-        Log.e("hdltag", "onZoom(TimeRulerView.java:715):缩放了");
+        //控制缩放比例
         if (mScale > 1) {
             if (rulerSpace < MAX_SCALE) {
                 rulerSpace++;
@@ -736,6 +843,12 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             if (rulerSpace > MIN_SCALE) {
                 rulerSpace--;
             }
+        }
+        //改变刻度文字精度
+        if (rulerSpace <= CUtils.dip2px(10)) {
+            scaleMode = ScaleMode.KEY_HOUSE;//小时
+        } else {
+            scaleMode = ScaleMode.KEY_MINUTE;//分钟
         }
         setCurrentTimeMillisNoDelayed(getCurrentTimeMillis());//实时设置到当前时间
     }
@@ -756,4 +869,72 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             }
         }, 100);
     }
+
+    /**
+     * ---------------------------------------------
+     * 从这里开始以下都是属性的设置
+     * ---------------------------------------------
+     *
+     * @param rulerColor
+     */
+    public void setRulerColor(int rulerColor) {
+        this.rulerColor = rulerColor;
+    }
+
+    public void setRulerWidthSamll(int rulerWidthSamll) {
+        this.rulerWidthSamll = rulerWidthSamll;
+    }
+
+    public void setRulerHeightSamll(int rulerHeightSamll) {
+        this.rulerHeightSamll = rulerHeightSamll;
+    }
+
+    public void setRulerWidthBig(int rulerWidthBig) {
+        this.rulerWidthBig = rulerWidthBig;
+    }
+
+    public void setRulerHeightBig(int rulerHeightBig) {
+        this.rulerHeightBig = rulerHeightBig;
+    }
+
+    public void setUpAndDownLineWidth(int upAndDownLineWidth) {
+        this.upAndDownLineWidth = upAndDownLineWidth;
+    }
+
+    public void setUpAndDownLineColor(int upAndDownLineColor) {
+        this.upAndDownLineColor = upAndDownLineColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+    }
+
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
+    }
+
+    public void setCenterLineColor(int centerLineColor) {
+        this.centerLineColor = centerLineColor;
+    }
+
+    public void setCenterLineWidth(int centerLineWidth) {
+        this.centerLineWidth = centerLineWidth;
+    }
+
+    public void setVedioBg(int vedioBg) {
+        this.vedioBg = vedioBg;
+    }
+
+    public void setSelectTimeBorderColor(int selectTimeBorderColor) {
+        this.selectTimeBorderColor = selectTimeBorderColor;
+    }
+
+    public void setSelectTimeAreaColor(int selectTimeAreaColor) {
+        this.selectTimeAreaColor = selectTimeAreaColor;
+    }
+
+    public void setSelectTimeStrokeWidth(float selectTimeStrokeWidth) {
+        this.selectTimeStrokeWidth = selectTimeStrokeWidth;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.hdl.timeruler;
+package com.hdl.timeruler.bean;
 
 /**
  * 选择时间监听

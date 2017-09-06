@@ -10,10 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdl.elog.ELog;
-import com.hdl.timeruler.OnBarMoveListener;
-import com.hdl.timeruler.OnSelectedTimeListener;
+import com.hdl.timeruler.bean.OnBarMoveListener;
+import com.hdl.timeruler.bean.OnSelectedTimeListener;
 import com.hdl.timeruler.TimeRulerView;
-import com.hdl.timeruler.TimeSlot;
+import com.hdl.timeruler.bean.TimeSlot;
 import com.hdl.timeruler.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -113,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 1000);
         List<TimeSlot> times = new ArrayList<>();
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) - 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 11 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 13 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 25 * 60 * 60 * 1000));
         tRuler.setVedioTimeSlot(times);
     }
 
@@ -123,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toAdd(View view) {
-//        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
+        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
 //        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000);
-        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 20 * 60 * 1000);
+//        tRuler.setCurrentTimeMillis(DateUtils.getTodayStart(System.currentTimeMillis()) + 20 * 60 * 1000);
     }
 
     boolean isMove = true;
@@ -146,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void showVedioArea(View view) {
         List<TimeSlot> times = new ArrayList<>();
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
         tRuler.setVedioTimeSlot(times);
     }
 

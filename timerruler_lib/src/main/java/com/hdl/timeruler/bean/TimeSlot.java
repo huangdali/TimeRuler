@@ -1,4 +1,4 @@
-package com.hdl.timeruler;
+package com.hdl.timeruler.bean;
 
 import com.hdl.timeruler.utils.DateUtils;
 
@@ -16,8 +16,13 @@ public class TimeSlot {
      * 结束时间
      */
     private long endTime;
+    /**
+     * 当前天数的开始时间（凌晨00:00:00）毫秒值
+     */
+    private long currentDayStartTimeMillis;
 
-    public TimeSlot(long startTime, long endTime) {
+    public TimeSlot(long currentDayStartTimeMillis, long startTime, long endTime) {
+        this.currentDayStartTimeMillis = currentDayStartTimeMillis;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -29,6 +34,9 @@ public class TimeSlot {
      * @return
      */
     public float getStartTime() {
+        if (currentDayStartTimeMillis > startTime) {
+            return 0;
+        }
         return (startTime - DateUtils.getTodayStart(startTime)) / 1000f;
     }
 
@@ -39,6 +47,9 @@ public class TimeSlot {
      * @return
      */
     public float getEndTime() {
+        if (currentDayStartTimeMillis + 24 * 60 * 60 * 1000 < endTime) {
+            return 24 * 60 * 60  - 1;
+        }
         return (endTime - DateUtils.getTodayStart(endTime)) / 1000f;
     }
 
