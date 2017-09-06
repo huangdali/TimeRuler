@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 
@@ -48,7 +49,8 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private int rulerWidthSamll = CUtils.dip2px(1);//小刻度的宽度
     private int rulerHeightSamll = CUtils.dip2px(10);//小刻度的高度
     private int rulerSpace = CUtils.dip2px(12);//刻度间的间隔
-
+    private static final int MAX_SCALE = CUtils.dip2px(20);//最大缩放值
+    private static final int MIN_SCALE = CUtils.dip2px(4);//最小缩放值
     private int rulerWidthBig = CUtils.dip2px(1);//大刻度的宽度
     private int rulerHeightBig = CUtils.dip2px(20);//大刻度的高度
     /**
@@ -147,7 +149,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     }
 
     private static final int WHAT_MOVING = 447;
-    private Handler mHandler=new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -157,6 +159,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             }
         }
     };
+
     public boolean isSelectTimeArea() {
         return isSelectTimeArea;
     }
@@ -208,6 +211,20 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 refreshCanvas();
             }
         }, 100);
+    }
+
+    /**
+     * 设置当前时间的毫秒值.(没有延迟)
+     * 设置一个100ms的延迟，避免过快设置导致短时间内重复绘制
+     *
+     * @param currentTimeMillis
+     */
+    private void setCurrentTimeMillisNoDelayed(long currentTimeMillis) {
+        int itemWidth = rulerWidthSamll + rulerSpace;//单个view的宽度
+        pixSecond = 60f / itemWidth;//itemWidth表示一分钟，
+        //设置最左边的时间为当前时间减view宽度一半所占的时间--->这个时间所在的像素值就是
+        lastPix = -((currentTimeMillis - currentDateStartTimeMillis) / 1000f - getWidth() / 2f * pixSecond) / pixSecond;
+        refreshCanvas();
     }
 
     /**
@@ -664,6 +681,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onScroll(int distance) {
+        Log.e("hdltag", "onScroll(TimeRulerView.java:671):开始滑动了");
         onBarMoveListener.onDragBar(distance > 0, getCurrentTimeMillis());
         lastPix += distance;
         refreshCanvas();
@@ -678,6 +696,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onFinished() {
+        Log.e("hdltag", "onFinished(TimeRulerView.java:685):滑动结束了");
         if (currentDateStartTimeMillis <= getCurrentTimeMillis() && getCurrentTimeMillis() <= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 2000)) {
             postDelayed(new Runnable() {
                 @Override
@@ -708,9 +727,20 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     public void onZoom(float mScale, double time) {
+        Log.e("hdltag", "onZoom(TimeRulerView.java:715):缩放了");
+        if (mScale > 1) {
+            if (rulerSpace < MAX_SCALE) {
+                rulerSpace++;
+            }
+        } else {
+            if (rulerSpace > MIN_SCALE) {
+                rulerSpace--;
+            }
+        }
+        setCurrentTimeMillisNoDelayed(getCurrentTimeMillis());//实时设置到当前时间
     }
 
-    private long lastConfigChangedTime;//最后横竖屏切换时的时间--->让横竖屏时间一致
+    private long lastConfigChangedTime;//横竖屏切换时的时间--->让横竖屏时间一致
 
     /**
      * 横竖屏切换的时候，重绘一下(也不能马上就重绘，需要有一个延迟)

@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.widget.Scroller;
 
 /**
- * 监听滑动
+ * 辅助滑动监听类
  */
 public class ScaleScroller {
 
@@ -24,10 +24,6 @@ public class ScaleScroller {
         public void handleMessage(Message msg) {
             boolean isFinished = scroller.computeScrollOffset();
             int curX = scroller.getCurrX();
-            int delta = lastX - curX;
-//            if(listener != null){
-//                listener.onScroll(delta);
-//            }
             lastX = curX;
             if (isFinished)
                 handler.sendEmptyMessage(ON_FLING);
@@ -94,7 +90,7 @@ public class ScaleScroller {
                     beforeLength = afterLenght;
                 }
                 float gapLenght = afterLenght - beforeLength;// 变化的长度
-                if (Math.abs(gapLenght) > 50f) {
+                if (Math.abs(gapLenght) > 5f) {
                     mScale = afterLenght / beforeLength;// 求的缩放的比例
                     listener.onZoom(mScale, time);
                     beforeLength = afterLenght;
@@ -115,9 +111,9 @@ public class ScaleScroller {
     }
 
     /**
-     * 获取两点的距离
+     * 计算两点的距离
      **/
-    float getDistance(MotionEvent event) {
+    private float getDistance(MotionEvent event) {
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
 

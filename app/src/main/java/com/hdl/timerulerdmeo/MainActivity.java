@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         tRuler.setOnSelectedTimeListener(new OnSelectedTimeListener() {
             @Override
             public void onDragging(long startTime, long endTime) {
-                tvProgress.setText(DateUtils.getDateByCurrentTiem(startTime) + " " + DateUtils.getTime(startTime) + "-" + DateUtils.getDateByCurrentTiem(endTime) + " " + DateUtils.getTime(endTime));
+                tvProgress.setText(DateUtils.getTime(startTime) + "-" + DateUtils.getTime(endTime));
             }
 
             @Override
@@ -75,8 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onBarMoving(long currentTime) {
-                ELog.e("自己移动");
-                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
+//                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
             }
 
             @Override
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         isMove = !isMove;
         if (isMove) {
             tRuler.openMove();
-        }else {
+        } else {
             tRuler.closeMove();
         }
     }
