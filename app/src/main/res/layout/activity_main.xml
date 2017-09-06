@@ -81,6 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="166dp"
             app:centerLineColor="#ff6e9fff"
+            app:viewBackgroundColor="#fff"
             app:rulerLineColor="#ffb5b5b5"
             app:rulerTextColor="#ff444242"
             app:vedioAreaColor="#336e9fff" />

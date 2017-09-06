@@ -1,7 +1,7 @@
 # TimeRuler
 
 时间轴、时间刻度尺
-
+- 继承至TextureView，效率更高
 - 已适配横竖屏
 - 缩放功能（分钟、小时级别）
 - 自动移动（自由决定开启与关闭移动）
@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.2.3'
+    compile 'com.jwkj:TimeLineView:v1.2.4'
 ```
 
 ### 混淆配置
@@ -56,6 +56,7 @@ app.build中使用
  ```
 
 ### 布局
+> TextureView本身不支持直接设置背景颜色（android:background="color"，设置之后会抛出异常），可以通过属性viewBackgroundColor来设置背景色
 
 最简单的使用（属性使用默认值）
 
@@ -77,6 +78,7 @@ app.build中使用
             app:rulerLineColor="#ffb5b5b5"
             app:rulerTextColor="#ff444242"
             app:vedioAreaColor="#336e9fff"
+            app:viewBackgroundColor="#fff"
             ...
             />
 ```
@@ -123,6 +125,10 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 - 选择时间边框大小-->selectTimeBorderSize" format="dimension" />
 
 ## 版本记录
+
+v1.2.4( [2017.09.06]() )
+
+- 【新增】设置背景颜色方法，同样布局文件中可以app:viewBackgroundColor="#fff"
 
 v1.2.3( [2017.09.06]() )
 

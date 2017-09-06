@@ -13,6 +13,8 @@
         <attr name="selectTimeBorderColor" format="color" />
         <!--已选择时间颜色-->
         <attr name="selectTimeAreaColor" format="color" />
+        <!--背景颜色-->
+        <attr name="viewBackgroundColor" format="color" />
         <!--中轴线大小-->
         <attr name="centerLineSize" format="dimension" />
         <!--时间文字大小-->

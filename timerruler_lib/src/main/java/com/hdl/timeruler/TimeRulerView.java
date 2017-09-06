@@ -96,13 +96,13 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private float selectTimeStrokeWidth = CUtils.dip2px(8);
 
     /**
-     * 背景颜色
-     */
-    private int bgColor = Color.WHITE;
-    /**
      * view的高度
      */
     private int view_height = CUtils.dip2px(166);//view的高度
+    /**
+     * view背景颜色
+     */
+    private int viewBackgroundColor = Color.WHITE;
     /**
      * 是否自动移动时间轴
      */
@@ -214,6 +214,8 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 vedioBg = a.getColor(attr, vedioBg);
             } else if (attr == R.styleable.TimeRulerView_rulerTextColor) {// 刻度文本颜色
                 textColor = a.getColor(attr, textColor);
+            } else if (attr == R.styleable.TimeRulerView_viewBackgroundColor) {// 刻度文本颜色
+                viewBackgroundColor = a.getColor(attr, viewBackgroundColor);
             } else if (attr == R.styleable.TimeRulerView_rulerTextSize) {// 刻度文本大小
                 textSize = (int) a.getDimension(attr, textSize);
             } else if (attr == R.styleable.TimeRulerView_rulerLineColor) {// 刻度线颜色
@@ -404,8 +406,8 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private void refreshCanvas() {
         Canvas canvas = lockCanvas();
         if (canvas != null) {
-            canvas.drawColor(bgColor);
-            drawUpAndDownLine(canvas);
+            canvas.drawColor(viewBackgroundColor);//画背景、由于TextureView不支持直接设置背景颜色，只能按这种方式
+            drawUpAndDownLine(canvas);//画上下两条线
             drawTextAndRuler(canvas);//画文本和刻度
             drawRecodeArea(canvas);//画有效视频区域
             drawCenterLine(canvas);//画中间标线
@@ -938,4 +940,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         this.selectTimeStrokeWidth = selectTimeStrokeWidth;
     }
 
+    public void setViewBackgroundColor(int viewBackgroundColor) {
+        this.viewBackgroundColor = viewBackgroundColor;
+    }
 }
