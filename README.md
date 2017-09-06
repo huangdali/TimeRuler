@@ -122,7 +122,8 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 - 小刻度线高度-->samllRulerLineHeight
 - 大刻度线宽度-->largeRulerLineWidth
 - 大刻度线高度-->largeRulerLineHeight
-- 选择时间边框大小-->selectTimeBorderSize" format="dimension" />
+- 选择时间边框大小-->selectTimeBorderSize
+- 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
 
