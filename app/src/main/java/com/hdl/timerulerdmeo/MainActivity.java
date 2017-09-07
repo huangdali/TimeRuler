@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         tRuler = (TimeRulerView) findViewById(R.id.tr_line);
-        tRuler.setCurrentTimeMillis(System.currentTimeMillis());
+        tRuler.setCurrentTimeMillis(1500480000000L - 2 * 60 * 60 * 1000);
         tvProgress = (TextView) findViewById(R.id.tv_progress);
         tvTime = (TextView) findViewById(R.id.tv_time);
         llP = (LinearLayout) findViewById(R.id.ll_porental);
@@ -68,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         tRuler.setOnBarMoveListener(new OnBarMoveListener() {
             @Override
             public void onDragBar(boolean isLeftDrag, long currentTime) {
-                ELog.e("拖动");
-                ELog.e("isLeftDrag(左边？)=" + isLeftDrag);
-                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
+//                ELog.e("拖动");
+//                ELog.e("isLeftDrag(左边？)=" + isLeftDrag);
+//                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
             }
 
             @Override
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onBarMoveFinish(long currentTime) {
-                ELog.e("拖动完成" + DateUtils.getDateTime(currentTime));
+//                ELog.e("拖动完成" + DateUtils.getDateTime(currentTime));
             }
 
             /**
@@ -113,10 +114,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 1000);
         List<TimeSlot> times = new ArrayList<>();
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) - 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 11 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 13 * 60 * 60 * 1000));
-        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 23 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 24 * 60 * 60 * 1000));
+//        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) - 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 120 * 60 * 1000));
+//        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 3 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 4 * 60 * 60 * 1000));
+//        times.add(new TimeSlot(DateUtils.getTodayStart(System.currentTimeMillis()), DateUtils.getTodayStart(System.currentTimeMillis()) + 11 * 60 * 60 * 1000, DateUtils.getTodayStart(System.currentTimeMillis()) + 13 * 60 * 60 * 1000));
+        times.add(new TimeSlot(DateUtils.getTodayStart(1500480000074L - 2 * 60 * 60 * 1000), 1500480000074L - 2 * 60 * 60 * 1000, 1500480000074L));
+        Log.e("hdltag", "setListener(MainActivity.java:121):" + times);
         tRuler.setVedioTimeSlot(times);
     }
 
@@ -156,20 +158,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            llH.removeAllViews();
-            llH.setVisibility(View.GONE);
-            llP.setVisibility(View.VISIBLE);
-            llP.addView(tRuler);
-            tRuler.setViewHeightForDp(166);
-
-        } else {
-            tRuler.setViewHeightForDp(90);
-            llP.removeAllViews();
-            llP.setVisibility(View.GONE);
-            llH.setVisibility(View.VISIBLE);
-            llH.addView(tRuler);
-        }
+//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            llH.removeAllViews();
+//            llH.setVisibility(View.GONE);
+//            llP.setVisibility(View.VISIBLE);
+//            llP.addView(tRuler);
+//            tRuler.setViewHeightForDp(166);
+//
+//        } else {
+//            tRuler.setViewHeightForDp(90);
+//            llP.removeAllViews();
+//            llP.setVisibility(View.GONE);
+//            llH.setVisibility(View.VISIBLE);
+//            llH.addView(tRuler);
+//        }
     }
 
     boolean isSelected = true;

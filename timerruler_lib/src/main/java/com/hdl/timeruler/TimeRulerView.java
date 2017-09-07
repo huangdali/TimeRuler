@@ -606,7 +606,11 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 } else {//15分钟之前的移动
                     currentSecond = viewWidth * pixSecond / 2f - rightX * pixSecond;
                 }
-                lastConfigChangedTime = getCurrentTimeMillis();//记录切换前的时间
+            }
+            if (isProtrait) {
+                lastPortraitTime = getCurrentTimeMillis();
+            } else {
+                lastLandscapeTime = getCurrentTimeMillis();
             }
             int divisor;//除数、刻度精度
             switch (scaleMode) {
@@ -798,7 +802,6 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     @Override
     public void onZoomFinished() {
-
     }
 
 
@@ -815,7 +818,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                         onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
                     }
                 }
-            }, 1000);
+            }, 2000);
         } else if (currentDateStartTimeMillis >= getCurrentTimeMillis()) {
             setCurrentTimeMillis(currentDateStartTimeMillis);
             if (onBarMoveListener != null) {
@@ -856,7 +859,10 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         setCurrentTimeMillisNoDelayed(getCurrentTimeMillis());//实时设置到当前时间
     }
 
-    private long lastConfigChangedTime;//横竖屏切换时的时间--->让横竖屏时间一致
+    private static long lastConfigChangedTime;//横竖屏切换时的时间--->让横竖屏时间一致
+    private static long lastPortraitTime = 0;
+    private static long lastLandscapeTime = 0;
+    private boolean isProtrait = true;
 
     /**
      * 横竖屏切换的时候，重绘一下(也不能马上就重绘，需要有一个延迟)
@@ -865,12 +871,20 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setCurrentTimeMillis(lastConfigChangedTime);
-            }
-        }, 100);
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            isProtrait = true;
+            lastPortraitTime = lastLandscapeTime;
+            setCurrentTimeMillis(lastPortraitTime);
+        } else {
+            isProtrait = false;
+            lastLandscapeTime = lastPortraitTime;
+            setCurrentTimeMillis(lastLandscapeTime);
+        }
+//        postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//            }
+//        }, 300);
     }
 
     /**
