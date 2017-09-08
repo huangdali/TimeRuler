@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.2.4'
+    compile 'com.jwkj:TimeLineView:v1.2.7'
 ```
 
 ### 混淆配置
@@ -126,6 +126,10 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 - 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
+
+v1.2.7( [2017.09.08]() )
+
+- 【优化】连续拖动不回调onBarMoveFinish()，直到用户停止拖动超过1.5秒才认为用户拖动结束
 
 v1.2.6( [2017.09.07]() )
 

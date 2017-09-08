@@ -245,6 +245,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * 切换主线程
      */
     private static final int WHAT_MOVING = 447;
+    private static final int WHAT_SCROLL_FINISHED = 448;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -252,6 +253,11 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 case WHAT_MOVING:
                     if (onBarMoveListener != null) {
                         onBarMoveListener.onBarMoving(getCurrentTimeMillis());
+                    }
+                    break;
+                case WHAT_SCROLL_FINISHED:
+                    if (onBarMoveListener != null) {
+                        onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
                     }
                     break;
             }
@@ -804,6 +810,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     public void onZoomFinished() {
     }
 
+    private Timer scrollTimer;
 
     /**
      * 滑动结束
@@ -811,14 +818,18 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     @Override
     public void onScrollFinished() {
         if (currentDateStartTimeMillis <= getCurrentTimeMillis() && getCurrentTimeMillis() <= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 2000)) {
-            postDelayed(new Runnable() {
+            if (scrollTimer != null) {
+                scrollTimer.cancel();
+            }
+            scrollTimer = new Timer();
+            scrollTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     if (onBarMoveListener != null) {
-                        onBarMoveListener.onBarMoveFinish(getCurrentTimeMillis());
+                        mHandler.sendEmptyMessage(WHAT_SCROLL_FINISHED);
                     }
                 }
-            }, 2000);
+            }, 1500);
         } else if (currentDateStartTimeMillis >= getCurrentTimeMillis()) {
             setCurrentTimeMillis(currentDateStartTimeMillis);
             if (onBarMoveListener != null) {
