@@ -877,20 +877,22 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     /**
      * 横竖屏切换的时候，重绘一下(也不能马上就重绘，需要有一个延迟)
+     * ***过时了，需要在自动移动、点击横竖屏切换前记录当前时间，然后在onConfigurationChanged方法中设置当前时间***
      *
      * @param newConfig
      */
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            isProtrait = true;
-            lastPortraitTime = lastLandscapeTime;
-            setCurrentTimeMillis(lastPortraitTime);
-        } else {
-            isProtrait = false;
-            lastLandscapeTime = lastPortraitTime;
-            setCurrentTimeMillis(lastLandscapeTime);
-        }
+//        Log.e("hdltag", "onConfigurationChanged(TimeRulerView.java:895):" +DateUtils.getDateTime(getCurrentTimeMillis()));
+//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            isProtrait = true;
+//            lastPortraitTime = lastLandscapeTime;
+//            setCurrentTimeMillis(lastPortraitTime);
+//        } else {
+//            isProtrait = false;
+//            lastLandscapeTime = lastPortraitTime;
+//            setCurrentTimeMillis(lastLandscapeTime);
+//        }
 //        postDelayed(new Runnable() {
 //            @Override
 //            public void run() {

@@ -1,19 +1,21 @@
 package com.hdl.timerulerdmeo;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdl.elog.ELog;
+import com.hdl.timeruler.TimeRulerView;
 import com.hdl.timeruler.bean.OnBarMoveListener;
 import com.hdl.timeruler.bean.OnSelectedTimeListener;
-import com.hdl.timeruler.TimeRulerView;
 import com.hdl.timeruler.bean.TimeSlot;
 import com.hdl.timeruler.utils.DateUtils;
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBarMoving(long currentTime) {
 //                ELog.e("currentTime" + DateUtils.getDateTime(currentTime));
+                currentTimeMillis = currentTime;
             }
 
             @Override
@@ -159,20 +162,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            llH.removeAllViews();
-//            llH.setVisibility(View.GONE);
-//            llP.setVisibility(View.VISIBLE);
-//            llP.addView(tRuler);
-//            tRuler.setViewHeightForDp(166);
-//
-//        } else {
-//            tRuler.setViewHeightForDp(90);
-//            llP.removeAllViews();
-//            llP.setVisibility(View.GONE);
-//            llH.setVisibility(View.VISIBLE);
-//            llH.addView(tRuler);
-//        }
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            llH.removeAllViews();
+            llH.setVisibility(View.GONE);
+            llP.setVisibility(View.VISIBLE);
+            llP.addView(tRuler);
+        } else {
+            llP.removeAllViews();
+            llP.setVisibility(View.GONE);
+            llH.setVisibility(View.VISIBLE);
+            llH.addView(tRuler);
+        }
+        Log.e("hdltag", "onConfigurationChanged(MainActivity.java:175):" + currentTimeMillis);
+        ELog.e("横竖屏了" + DateUtils.getDateTime(currentTimeMillis));
+        tRuler.setCurrentTimeMillis(currentTimeMillis);
     }
 
     boolean isSelected = true;
@@ -185,5 +188,20 @@ public class MainActivity extends AppCompatActivity {
     public void getSelected(View view) {
         ELog.e("tRuler.getSelectStartTime()=" + DateUtils.getDateByCurrentTiem(tRuler.getSelectStartTime()) + "  " + DateUtils.getTime(tRuler.getSelectStartTime()));
         tvProgress.setText(DateUtils.getTime(tRuler.getSelectStartTime()) + "-" + DateUtils.getTime(tRuler.getSelectEndTime()));
+    }
+
+    public void onHalfScreen(View view) {
+//        currentTimeMillis = tRuler.getCurrentTimeMillis();
+        ELog.e(DateUtils.getDateTime(currentTimeMillis));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置成全屏模式
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);//强制为横屏
+    }
+
+    private long currentTimeMillis;
+
+    public void onExitHalfScreen(View view) {
+//        currentTimeMillis = tRuler.getCurrentTimeMillis();
+        ELog.e(DateUtils.getDateTime(currentTimeMillis));
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制为竖屏
     }
 }

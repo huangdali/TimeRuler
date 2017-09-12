@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.2.7'
+    compile 'com.jwkj:TimeLineView:v1.2.8'
 ```
 
 ### 混淆配置
@@ -104,6 +104,47 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
     tRuler.closeMove();//关闭移动
 ```
 
+### 关于横竖屏适配
+
+#### 为什么要适配？
+
+由于横竖屏切换之后，view宽高不能保持一致导致需要适配
+
+#### 适配步骤
+
+1、定义一个全局的当前时间毫秒值
+
+```java
+ private long currentTimeMillis;
+```
+
+2、在onBarMoving回调方法中记录currentTimeMillis
+
+```java
+tRuler.setOnBarMoveListener(new OnBarMoveListener() {
+             ...
+            @Override
+            public void onBarMoving(long currentTime) {
+                currentTimeMillis = currentTime;
+            }
+          ...
+        });
+```
+
+3、在时间轴所在activity/fragment中重写onConfigurationChanged方法
+
+```java
+  @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        ...
+        tRuler.setCurrentTimeMillis(currentTimeMillis);
+        ...
+    }
+```
+
+>通过以上三个步骤即可适配横竖屏（手动与自动横竖屏都可以）
+
 
 ## 附表
 
@@ -126,6 +167,10 @@ tRuler.setCurrentTimeMillis(设置中心线的时间)
 - 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
+
+v1.2.8( [2017.09.12]() )
+
+- 【优化】需要手动适配横竖屏切换
 
 v1.2.7( [2017.09.08]() )
 

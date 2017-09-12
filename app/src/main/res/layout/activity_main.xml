@@ -57,6 +57,17 @@
             android:onClick="getSelected"
             android:text="获取选择时间" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onHalfScreen"
+            android:text="全屏" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onExitHalfScreen"
+            android:text="退出全屏" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -79,7 +90,7 @@
         <com.hdl.timeruler.TimeRulerView
             android:id="@+id/tr_line"
             android:layout_width="match_parent"
-            android:layout_height="166dp"
+            android:layout_height="match_parent"
             app:centerLineColor="#ff6e9fff"
             app:viewBackgroundColor="#fff"
             app:rulerLineColor="#ffb5b5b5"
