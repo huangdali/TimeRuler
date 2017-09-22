@@ -82,7 +82,7 @@ public class ScaleScroller {
             if (event.getPointerCount() == 1 && !isDouble && isCanScroll) {
                 int distanceX = (int) (event.getX() - lastX);
                 if (distanceX != 0) {
-                    if (Math.abs(Math.abs(distanceX) - Math.abs(lastDistanceX)) < 100) {//防止快速滑动导致数据跳远过大
+                    if (Math.abs(Math.abs(distanceX) - Math.abs(lastDistanceX)) <100) {//防止快速滑动导致数据跳远过大
                         listener.onScroll(distanceX);
                         lastX = (int) event.getX();
                         lastDistanceX = distanceX;

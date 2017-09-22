@@ -55,7 +55,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
     private static final int DEFAULT_RULER_SPACE = CUtils.dip2px(12);//设置item默认间隔
     private int rulerSpace = DEFAULT_RULER_SPACE;//刻度间的间隔
     private static final int MAX_SCALE = CUtils.dip2px(39);//最大缩放值
-    private static final int MIN_SCALE = CUtils.dip2px(5);//最小缩放值
+    private static final int MIN_SCALE = CUtils.dip2px(6);//最小缩放值
 
     private Paint largeRulerPaint = new Paint();//大刻度画笔
     private int rulerWidthBig = CUtils.dip2px(0.5f);//大刻度的宽度
@@ -854,11 +854,11 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         //控制缩放比例
         if (mScale > 1) {
             if (rulerSpace < MAX_SCALE) {
-                rulerSpace++;
+                rulerSpace+=CUtils.dip2px(1);
             }
         } else {
             if (rulerSpace > MIN_SCALE) {
-                rulerSpace--;
+                rulerSpace-=CUtils.dip2px(1);
             }
         }
         //改变刻度文字精度
