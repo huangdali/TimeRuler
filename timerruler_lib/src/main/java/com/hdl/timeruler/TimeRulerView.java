@@ -436,14 +436,14 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 selectTimeAreaDistanceRight = (getCurrentTimeMillis() - currentDateStartTimeMillis) / pixSecond / 1000f + 2.5f * 60 / pixSecond + lastPix;
             }
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth);
-            canvas.drawLine(selectTimeAreaDistanceLeft, selectTimeStrokeWidth / 2, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
-            canvas.drawLine(selectTimeAreaDistanceRight, selectTimeStrokeWidth / 2, selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 2, selectAreaPaint);
+            canvas.drawLine(selectTimeAreaDistanceLeft, selectTimeStrokeWidth / 2, selectTimeAreaDistanceLeft, view_height - textSize*1.2f - selectTimeStrokeWidth / 2, selectAreaPaint);
+            canvas.drawLine(selectTimeAreaDistanceRight, selectTimeStrokeWidth / 2, selectTimeAreaDistanceRight, view_height - textSize*1.2f - selectTimeStrokeWidth / 2, selectAreaPaint);
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 3);
             canvas.drawLine(selectTimeAreaDistanceRight, 0, selectTimeAreaDistanceLeft, 0, selectAreaPaint);
             selectAreaPaint.setStrokeWidth(selectTimeStrokeWidth / 4);
-            canvas.drawLine(selectTimeAreaDistanceRight, view_height - textSize - selectTimeStrokeWidth / 6, selectTimeAreaDistanceLeft, view_height - textSize - selectTimeStrokeWidth / 6, selectAreaPaint);
+            canvas.drawLine(selectTimeAreaDistanceRight, view_height - textSize*1.2f - selectTimeStrokeWidth / 6, selectTimeAreaDistanceLeft, view_height - textSize*1.2f - selectTimeStrokeWidth / 6, selectAreaPaint);
             //画带透明色的选择区域
-            canvas.drawRect(selectTimeAreaDistanceLeft, 0, selectTimeAreaDistanceRight, view_height - textSize, vedioArea);
+            canvas.drawRect(selectTimeAreaDistanceLeft, 0, selectTimeAreaDistanceRight, view_height - textSize*1.2f, vedioArea);
             //回调结果出去
             onSelectedTimeListener.onDragging(getSelectStartTime(), getSelectEndTime());
         }
@@ -491,7 +491,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 startX = startX < 0 ? 0 : startX;//左边超出屏幕（<0）的就不画
                 float endX = getRightXByTimeSeconde(timeSlot.getEndTime()) + lastPix;
                 endX = endX > getWidth() ? getWidth() : endX;//右边超出屏幕（>getWidth）的就不画
-                vedioAreaRect.set(startX, 0, endX, view_height - textSize);
+                vedioAreaRect.set(startX, 0, endX, view_height - textSize*1.2f);
                 canvas.drawRect(vedioAreaRect, vedioAreaPaint);
             }
         }
@@ -553,7 +553,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * @param canvas
      */
     private void drawCenterLine(Canvas canvas) {
-        canvas.drawLine(getWidth() / 2, 0, getWidth() / 2, view_height - textSize, centerLinePaint);
+        canvas.drawLine(getWidth() / 2, 0, getWidth() / 2, view_height - textSize*1.2f, centerLinePaint);
     }
 
     /**
@@ -633,14 +633,14 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                 //画上边刻度
                 canvas.drawLine(rightX, 0, rightX, rulerHeightBig, largeRulerPaint);
                 //画下边刻度
-                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightBig - textSize, largeRulerPaint);
+                canvas.drawLine(rightX, view_height - textSize*1.2f, rightX, view_height - rulerHeightBig - textSize*1.2f, largeRulerPaint);
                 //画文本
                 draText(canvas, index * 60, rightX);
             } else {//小刻度
                 //画上面小刻度
                 canvas.drawLine(rightX, 0, rightX, rulerHeightSamll, smallRulerPaint);
                 //画下面小刻度
-                canvas.drawLine(rightX, view_height - textSize, rightX, view_height - rulerHeightSamll - textSize, smallRulerPaint);
+                canvas.drawLine(rightX, view_height - textSize*1.2f, rightX, view_height - rulerHeightSamll - textSize*1.2f, smallRulerPaint);
             }
         }
     }
@@ -667,7 +667,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         int viewWidth = getWidth();
         //画上下两条线
         canvas.drawLine(0, upAndDownLineWidth / 2, viewWidth, rulerWidthSamll / 2, upAndDownLinePaint);
-        canvas.drawLine(0, view_height - textSize, viewWidth, view_height - textSize, upAndDownLinePaint);
+        canvas.drawLine(0, view_height - textSize*1.2f, viewWidth, view_height - textSize*1.2f, upAndDownLinePaint);
     }
 
     /**
@@ -700,7 +700,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
         }
         keyTextWidth = keyTickTextPaint.measureText(keyText);
         keyTextX = x - keyTextWidth / 2;
-        canvas.drawText(keyText, keyTextX, view_height, keyTickTextPaint);
+        canvas.drawText(keyText, keyTextX, view_height-CUtils.dip2px(3), keyTickTextPaint);
     }
 
     @Override

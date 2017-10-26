@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.2.8'
+    compile 'com.jwkj:TimeLineView:v1.3.1'
 ```
 
 ### 混淆配置
@@ -167,6 +167,10 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 - 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
+
+v1.3.1( [2017.10.26]() )
+
+- 【修复】部分手机时间文本被挡住一小部分
 
 v1.2.8( [2017.09.12]() )
 
