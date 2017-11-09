@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.3.2'
+    compile 'com.jwkj:TimeLineView:v1.3.3'
 ```
 
 ### 混淆配置
@@ -167,6 +167,10 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 - 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
+
+v1.3.3( [2017.11.09]() )
+
+- 【新增】缩放到最大和最小时的回调方法
 
 v1.3.2( [2017.10.26]() )
 

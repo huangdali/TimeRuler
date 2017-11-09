@@ -38,4 +38,13 @@ public interface OnBarMoveListener {
      */
     void onMoveExceedEndTime();
 
+    /**
+     * 超过最大缩放值
+     */
+    void onMaxScale();
+
+    /**
+     * 超过最小缩放值
+     */
+    void onMinScale();
 }
