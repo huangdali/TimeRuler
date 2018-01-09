@@ -62,12 +62,31 @@
             android:layout_height="wrap_content"
             android:onClick="onHalfScreen"
             android:text="全屏" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onExitHalfScreen"
             android:text="退出全屏" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowOrHideLeft"
+            android:text="显示/隐藏上一天提示" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowOrHideRight"
+            android:text="显示/隐藏下一天提示" />
     </LinearLayout>
 
     <LinearLayout
@@ -79,7 +98,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_porental"
         android:layout_width="match_parent"
         android:layout_height="166dp"
@@ -92,12 +111,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:centerLineColor="#ff6e9fff"
-            app:viewBackgroundColor="#fff"
             app:rulerLineColor="#ffb5b5b5"
             app:rulerTextColor="#ff444242"
-            app:vedioAreaColor="#336e9fff" />
+            app:vedioAreaColor="#336e9fff"
+            app:viewBackgroundColor="#fff" />
 
-    </LinearLayout>
+        <com.hdl.timeruler.TipView
+            android:id="@+id/tv_tip"
+            android:layout_width="match_parent"
+            android:layout_height="166dp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_time"

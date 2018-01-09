@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hdl.elog.ELog;
 import com.hdl.timeruler.TimeRulerView;
+import com.hdl.timeruler.TipView;
 import com.hdl.timeruler.bean.OnBarMoveListener;
 import com.hdl.timeruler.bean.OnSelectedTimeListener;
 import com.hdl.timeruler.bean.TimeSlot;
@@ -30,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTime;
     private long date;
     private TextView tvProgress;
-    private LinearLayout llP, llH;
+    private RelativeLayout llP;
+    private LinearLayout llH;
+    private TipView tvTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
         tRuler.setCurrentTimeMillis(1500480000000L - 2 * 60 * 60 * 1000);
         tvProgress = (TextView) findViewById(R.id.tv_progress);
         tvTime = (TextView) findViewById(R.id.tv_time);
-        llP = (LinearLayout) findViewById(R.id.ll_porental);
+        llP = (RelativeLayout) findViewById(R.id.ll_porental);
         llH = (LinearLayout) findViewById(R.id.ll_lanspace);
+        tvTip = (TipView) findViewById(R.id.tv_tip);
     }
 
     private void setListener() {
@@ -102,6 +107,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMoveExceedEndTime() {
                 ELog.e("超过结束时间了");
+            }
+
+            /**
+             * 超过最大缩放值
+             */
+            @Override
+            public void onMaxScale() {
+
+            }
+
+            /**
+             * 超过最小缩放值
+             */
+            @Override
+            public void onMinScale() {
+
             }
         });
         new Timer().schedule(new TimerTask() {
@@ -203,5 +224,13 @@ public class MainActivity extends AppCompatActivity {
 //        currentTimeMillis = tRuler.getCurrentTimeMillis();
         ELog.e(DateUtils.getDateTime(currentTimeMillis));
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//强制为竖屏
+    }
+
+    public void onShowOrHideRight(View view) {
+        tvTip.setShowRightTip(true);
+    }
+
+    public void onShowOrHideLeft(View view) {
+        tvTip.setShowLeftTip(true);
     }
 }

@@ -1,9 +1,12 @@
 package com.hdl.timeruler;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -100,6 +103,18 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      */
     private int view_height = CUtils.dip2px(166);//view的高度
     /**
+     * 提示框相对于中轴线的右边距
+     */
+    private int tip_margin_right = CUtils.dip2px(21.5f);
+    /**
+     * 提示框箭头相对于中轴线的右边距
+     */
+    private int tip_drag_margin_right = CUtils.dip2px(14.5f);
+    /**
+     * 提示框相对于中轴线的上边距
+     */
+    private int tip_margin_top = CUtils.dip2px(45);
+    /**
      * view背景颜色
      */
     private int viewBackgroundColor = Color.WHITE;
@@ -140,6 +155,18 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
      * 时间轴拖动
      */
     private OnBarMoveListener onBarMoveListener;
+    /**
+     * 上下文对象
+     */
+    private Context mContext;
+    /**
+     * 是否显示左边（上一天）提示
+     */
+    private boolean isShowLeftTip = false;
+    /**
+     * 是否显示右边（下一天）提示
+     */
+    private boolean isShowRightTip = false;
 
     public TimeRulerView(Context context) {
         this(context, null);
@@ -151,6 +178,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     public TimeRulerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         initAttr(attrs, defStyle);
         mScroller = new ScaleScroller(getContext(), this);
         setSurfaceTextureListener(this);
@@ -430,8 +458,56 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             drawRecodeArea(canvas);//画有效视频区域
             drawCenterLine(canvas);//画中间标线
             drawSelectTimeArea(canvas);//画视频选择区域
+            if (isShowLeftTip) {
+                drawLastDayTip(canvas);
+            }
+            if (isShowRightTip) {
+                drawNextDayTip(canvas);
+            }
         }
         unlockCanvasAndPost(canvas);
+    }
+
+    private boolean changeFlag = false;
+
+    /**
+     * 画下一天的提示
+     *
+     * @param canvas
+     */
+    private void drawNextDayTip(Canvas canvas) {
+        //图片提示
+        Bitmap tipRight = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_next_day);
+        //箭头
+        Bitmap dragRight = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_drag_left);
+        canvas.drawBitmap(tipRight, getWidth() / 2 + tip_margin_right, tip_margin_top, centerLinePaint);
+        if (changeFlag) {
+            canvas.drawBitmap(dragRight, getWidth() / 2 + tip_drag_margin_right, tip_margin_top + tipRight.getHeight() / 2 + CUtils.dip2px(4), centerLinePaint);
+        }
+//        tipAlphaAnimator=ObjectAnimator.ofFloat(dragRight,"Alpha",1,0,1);
+        tipRight.recycle();
+        dragRight.recycle();
+    }
+
+    private ObjectAnimator tipAlphaAnimator;
+
+    /**
+     * 画上一天提示
+     *
+     * @param canvas
+     */
+    private void drawLastDayTip(Canvas canvas) {
+        changeFlag = !changeFlag;
+        //图片提示
+        Bitmap tipLeft = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_last_day);
+        //箭头
+        Bitmap dragLeft = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_drag_right);
+        canvas.drawBitmap(tipLeft, getWidth() / 2 - tipLeft.getWidth() - tip_margin_right, tip_margin_top, centerLinePaint);
+        if (changeFlag) {
+            canvas.drawBitmap(dragLeft, getWidth() / 2 - dragLeft.getWidth() - tip_drag_margin_right, tip_margin_top + tipLeft.getHeight() / 2 + CUtils.dip2px(4), centerLinePaint);
+        }
+        tipLeft.recycle();
+        dragLeft.recycle();
     }
 
     /**
@@ -985,5 +1061,24 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
 
     public void setViewBackgroundColor(int viewBackgroundColor) {
         this.viewBackgroundColor = viewBackgroundColor;
+    }
+
+    public boolean isShowLeftTip() {
+        return isShowLeftTip;
+    }
+
+    public void setShowLeftTip(boolean showLeftTip) {
+        isShowLeftTip = showLeftTip;
+    }
+
+    public boolean isShowRightTip() {
+        return isShowRightTip;
+    }
+
+    public void setShowRightTip(boolean showRightTip) {
+        isShowRightTip = showRightTip;
+        if (isShowRightTip) {
+
+        }
     }
 }

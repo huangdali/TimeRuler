@@ -24,6 +24,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 //    compile 'com.hdl:elog:v2.0.2'
 }
 
@@ -36,7 +37,7 @@ publish{
     userOrg = 'huangdali'//bintray.com的用户名
     groupId = 'com.jwkj'//jcenter上的路径
     artifactId = 'TimeLineView'//项目名称
-    publishVersion = 'v1.3.3'//版本号
+    publishVersion = 'v1.3.4'//版本号
     desc = 'TimeLineView'//描述，不重要
     website = siteUrl//项目主页
 }
