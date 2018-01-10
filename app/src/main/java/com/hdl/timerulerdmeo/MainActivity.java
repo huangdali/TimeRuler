@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,6 +20,7 @@ import com.hdl.timeruler.TipView;
 import com.hdl.timeruler.bean.OnBarMoveListener;
 import com.hdl.timeruler.bean.OnSelectedTimeListener;
 import com.hdl.timeruler.bean.TimeSlot;
+import com.hdl.timeruler.utils.CUtils;
 import com.hdl.timeruler.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private long date;
     private TextView tvProgress;
     private RelativeLayout llP;
-    private LinearLayout llH;
+    private RelativeLayout llH;
     private TipView tvTip;
 
     @Override
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         tvProgress = (TextView) findViewById(R.id.tv_progress);
         tvTime = (TextView) findViewById(R.id.tv_time);
         llP = (RelativeLayout) findViewById(R.id.ll_porental);
-        llH = (LinearLayout) findViewById(R.id.ll_lanspace);
+        llH = (RelativeLayout) findViewById(R.id.ll_lanspace);
         tvTip = (TipView) findViewById(R.id.tv_tip);
     }
 
@@ -188,11 +190,15 @@ public class MainActivity extends AppCompatActivity {
             llH.setVisibility(View.GONE);
             llP.setVisibility(View.VISIBLE);
             llP.addView(tRuler);
+            tvTip.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            llP.addView(tvTip);
         } else {
             llP.removeAllViews();
             llP.setVisibility(View.GONE);
             llH.setVisibility(View.VISIBLE);
             llH.addView(tRuler);
+            tvTip.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, CUtils.dip2px(75)));
+            llH.addView(tvTip);
         }
         Log.e("hdltag", "onConfigurationChanged(MainActivity.java:175):" + currentTimeMillis);
         ELog.e("横竖屏了" + DateUtils.getDateTime(currentTimeMillis));
@@ -232,5 +238,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void onShowOrHideLeft(View view) {
         tvTip.setShowLeftTip(true);
+    }
+
+    public void onShowOrHideLeftLandscape(View view) {
+        tvTip.setShowLeftTipLandscape(true);
+    }
+
+    public void onShowOrHideRightLandscape(View view) {
+        tvTip.setShowRightTipLandscape(true);
     }
 }

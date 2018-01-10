@@ -88,15 +88,32 @@
             android:onClick="onShowOrHideRight"
             android:text="显示/隐藏下一天提示" />
     </LinearLayout>
-
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowOrHideLeftLandscape"
+            android:text="显示/隐藏上一天提示(横屏)" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowOrHideRightLandscape"
+            android:text="显示/隐藏下一天提示（横屏）" />
+    </LinearLayout>
+
+    <RelativeLayout
         android:id="@+id/ll_lanspace"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:orientation="vertical"
         android:visibility="gone">
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ll_porental"
@@ -119,7 +136,7 @@
         <com.hdl.timeruler.TipView
             android:id="@+id/tv_tip"
             android:layout_width="match_parent"
-            android:layout_height="166dp" />
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <TextView
