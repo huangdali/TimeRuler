@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.3.3'
+    compile 'com.jwkj:TimeLineView:v1.3.6'
 ```
 
 ### 混淆配置
@@ -168,11 +168,11 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 
 ## 版本记录
 
-v1.3.5( [2018.01.10]() )
+v1.3.6( [2018.01.10]() )
 
 - 【新增】新增视频开始和结束，再继续拖动时的提示(横屏)
 
-v1.3.4( [2018.01.09]() )
+v1.3.5( [2018.01.09]() )
 
 - 【新增】新增视频开始和结束，再继续拖动时的提示（竖屏）
 
