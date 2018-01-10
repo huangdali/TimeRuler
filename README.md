@@ -30,7 +30,7 @@
 app.build中使用
 
 ```java
-    compile 'com.jwkj:TimeLineView:v1.3.6'
+    compile 'com.jwkj:TimeLineView:v1.3.7'
 ```
 
 ### 混淆配置
@@ -167,6 +167,10 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 - 设置背景颜色-->viewBackgroundColor
 
 ## 版本记录
+
+v1.3.7( [2018.01.10]() )
+
+- 【修复】提示页面箭头与图片不一致问题
 
 v1.3.6( [2018.01.10]() )
 

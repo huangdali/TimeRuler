@@ -109,18 +109,16 @@
     <RelativeLayout
         android:id="@+id/ll_lanspace"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="75dp"
         android:orientation="vertical"
         android:visibility="gone">
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/ll_porental"
         android:layout_width="match_parent"
-        android:layout_height="166dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="2dp"
+        android:layout_height="178dp"
         android:background="#1000">
 
         <com.hdl.timeruler.TimeRulerView
@@ -137,7 +135,7 @@
             android:id="@+id/tv_tip"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </RelativeLayout>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tv_time"

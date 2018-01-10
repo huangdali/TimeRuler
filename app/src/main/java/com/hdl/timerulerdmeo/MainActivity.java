@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvTime;
     private long date;
     private TextView tvProgress;
-    private RelativeLayout llP;
+    private FrameLayout llP;
     private RelativeLayout llH;
     private TipView tvTip;
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         tRuler.setCurrentTimeMillis(1500480000000L - 2 * 60 * 60 * 1000);
         tvProgress = (TextView) findViewById(R.id.tv_progress);
         tvTime = (TextView) findViewById(R.id.tv_time);
-        llP = (RelativeLayout) findViewById(R.id.ll_porental);
+        llP = (FrameLayout) findViewById(R.id.ll_porental);
         llH = (RelativeLayout) findViewById(R.id.ll_lanspace);
         tvTip = (TipView) findViewById(R.id.tv_tip);
     }
