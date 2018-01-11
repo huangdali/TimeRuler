@@ -855,7 +855,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
             if (onBarMoveListener != null) {
                 onBarMoveListener.onMoveExceedStartTime();
             }
-        } else if (getCurrentTimeMillis() >= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000)) {
+        } else if (getCurrentTimeMillis() >= (currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 500)) {
             setCurrentTimeMillis(currentDateStartTimeMillis + 24 * 60 * 60 * 1000 - 1000);
             if (onBarMoveListener != null) {
                 onBarMoveListener.onMoveExceedEndTime();

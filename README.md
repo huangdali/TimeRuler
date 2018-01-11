@@ -168,6 +168,10 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 
 ## 版本记录
 
+v1.3.9( [2018.01.11]() )
+
+- 【修复】onMoveExceedEndTime()回调两次问题
+
 v1.3.8( [2018.01.11]() )
 
 - 【优化】拖动的灵敏度
