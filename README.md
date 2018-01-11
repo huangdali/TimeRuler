@@ -168,6 +168,10 @@ tRuler.setOnBarMoveListener(new OnBarMoveListener() {
 
 ## 版本记录
 
+v1.3.8( [2018.01.11]() )
+
+- 【优化】拖动的灵敏度
+
 v1.3.7( [2018.01.10]() )
 
 - 【修复】提示页面箭头与图片不一致问题

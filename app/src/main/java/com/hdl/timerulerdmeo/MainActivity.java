@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBarMoveFinish(long currentTime) {
                 ELog.e("拖动完成" + DateUtils.getDateTime(currentTime));
-                Toast.makeText(MainActivity.this, "拖动完成", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "拖动完成", Toast.LENGTH_SHORT).show();
             }
 
             /**

@@ -849,7 +849,7 @@ public class TimeRulerView extends TextureView implements TextureView.SurfaceTex
                         mHandler.sendEmptyMessage(WHAT_SCROLL_FINISHED);
                     }
                 }
-            }, 1500);
+            }, 500);
         } else if (currentDateStartTimeMillis >= getCurrentTimeMillis()) {
             setCurrentTimeMillis(currentDateStartTimeMillis);
             if (onBarMoveListener != null) {
