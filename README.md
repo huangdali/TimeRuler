@@ -1,3 +1,7 @@
+# 此项目已经迁移至：https://github.com/huangdali/RulerView
+> 最新内容请见上面的仓库地址，此仓库不再更新内容
+
+
 # TimeRuler
 
 时间轴、时间刻度尺
